@@ -39,6 +39,23 @@ def congratulatory_message():
 def menus():
     return render_template('menus.html')
 
+@app.route('/search', methods=['POST'])
+def search():
+    search_query = request.form['search_query']
+    conn = connection()
+    cur = conn.cursor()
+
+    # Execute a SQL query to search for examinees based on the search_query
+    cur.execute("""
+        SELECT * FROM examinees
+        WHERE full_name LIKE %s OR course LIKE %s
+    """, ('%' + search_query + '%', '%' + search_query + '%'))
+
+    search_results = cur.fetchall()
+    conn.close()
+
+    # Pass the search results data to the 'examinees.html' template
+    return render_template('examinees.html', examinees_data=search_results)
 
 @app.route('/booking_process', methods=['POST'])
 def booking_process():
@@ -96,35 +113,88 @@ def booking_process():
         return redirect(url_for('examinees'))
 
 
-# Update the '/examinees' route
 @app.route('/examinees', methods=['GET', 'POST'])
 def examinees():
     conn = connection()
     cur = conn.cursor()
     
-    filter_value = request.args.get('filter', 'All')  # Get the filter value from the URL
-    page = request.args.get('page', 1, type=int)  # Get the page number from the URL
+    # Get the filter value from the URL
+    filter_value = request.args.get('filter', 'All')
+    
+    # Get the search query from the URL
+    search_query = request.args.get('search_query', '')
+    
+    # Get the page parameter from the URL or set it to 1 by default
+    page = request.args.get('page', 1, type=int)
     
     per_page = 10  # Number of records to display per page
     
     if filter_value == 'All':
-        # Execute the SQL query to fetch all records with pagination and sorting
+        # Execute the SQL query to fetch all records from 'examinees' with pagination and sorting
         cur.execute("""
             SELECT * FROM examinees
-            ORDER BY full_name ASC  # You can change the sorting criteria
+            WHERE full_name LIKE %s OR
+                  last_name LIKE %s OR
+                  first_name LIKE %s OR
+                  middle_name LIKE %s OR
+                  gender LIKE %s OR
+                  course LIKE %s OR
+                  school LIKE %s OR
+                  company_name LIKE %s OR
+                  position LIKE %s OR
+                  examination_date LIKE %s OR
+                  exam_venue LIKE %s
+            ORDER BY full_name ASC
             LIMIT %s OFFSET %s
-        """, (per_page, (page - 1) * per_page))
-        examinees_data = cur.fetchall()
-        
-        # Calculate the total number of pages
-        cur.execute("SELECT COUNT(*) FROM examinees")
-        total_records = cur.fetchone()[0]
-        total_pages = (total_records + per_page - 1) // per_page
-        
-        conn.close()  # Close the database connection
-        return render_template('examinees.html', examinees_data=examinees_data, page=page, total_pages=total_pages, filter=filter_value)
+        """, ('%' + search_query + '%',) * 11 + (per_page, (page - 1) * per_page))
+    elif filter_value == 'Passed':
+        # Execute the SQL query to fetch only "Passed" records from '2023_ict_diagnostic_passers' with pagination and sorting
+        cur.execute("""
+            SELECT * FROM 2023_ict_diagnostic_passers
+            WHERE status = 'Passed' AND (full_name LIKE %s OR
+                                         last_name LIKE %s OR
+                                         first_name LIKE %s OR
+                                         middle_name LIKE %s OR
+                                         gender LIKE %s OR
+                                         course LIKE %s OR
+                                         school LIKE %s OR
+                                         company_name LIKE %s OR
+                                         position LIKE %s OR
+                                         examination_date LIKE %s OR
+                                         exam_venue LIKE %s)
+            ORDER BY full_name ASC
+            LIMIT %s OFFSET %s
+        """, ('%' + search_query + '%',) * 11 + (per_page, (page - 1) * per_page))
+    else:
+        # Invalid filter value, return an error or handle it as needed
+        return "Invalid filter value"
     
-    return redirect(url_for('examinees_passed', page=page, filter=filter_value))
+    examinees_data = cur.fetchall()
+    
+    # Calculate the total number of pages based on the total number of records
+    cur.execute("""
+        SELECT COUNT(*) FROM examinees
+        WHERE full_name LIKE %s OR
+              last_name LIKE %s OR
+              first_name LIKE %s OR
+              middle_name LIKE %s OR
+              gender LIKE %s OR
+              course LIKE %s OR
+              school LIKE %s OR
+              company_name LIKE %s OR
+              position LIKE %s OR
+              examination_date LIKE %s OR
+              exam_venue LIKE %s
+    """, ('%' + search_query + '%',) * 11)
+    total_records = cur.fetchone()[0]
+    total_pages = (total_records + per_page - 1) // per_page
+    
+    conn.close()  # Close the database connection
+    
+    # Pass the search results data, filter, and search_query to the 'examinees.html' template
+    return render_template('examinees.html', examinees_data=examinees_data, page=page, total_pages=total_pages, filter=filter_value, search_query=search_query)
+
+
 
 # Update the '/examinees/passed' route
 @app.route('/examinees/passed', methods=['GET', 'POST'])
