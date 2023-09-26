@@ -38,73 +38,94 @@ def congratulatory_message():
 @app.route('/menus')
 def menus():
     return render_template('menus.html')
+
+
 @app.route('/booking_process', methods=['POST'])
 def booking_process():
-    full_name = request.form['full_name']
-    last_name = request.form['last_name']
-    first_name = request.form['first_name']
-    middle_name = request.form['middle_name']
-    gender = request.form['gender']
-    profession_or_student = request.form['profession_or_student']
-    course = request.form['course']
-    school = request.form['school']
-    company_name = request.form['company_name']
-    position = request.form['position']
-    examination_date = request.form['examination_date']
-    exam_venue = request.form['exam_venue']
-    
-    # Check if the examinee passed the examination (you can use a checkbox or other input for this)
-    passed = request.form.get('passed', 'No')  # Default to 'No' if not checked
-    
-    conn = connection()
-    cur = conn.cursor()
-    
-    # Insert data into the 'examinees' table
-    cur.execute("""
-        INSERT INTO examinees (full_name, last_name, first_name, middle_name, gender, 
-        profession_or_student, course, school, company_name, position, examination_date, 
-        exam_venue)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-    """, (full_name, last_name, first_name, middle_name, gender, 
-          profession_or_student, course, school, company_name, position, 
-          examination_date, exam_venue))
-    
-    # Check if the examinee passed and insert into the '2023_ict_diagnostic_passers' table
-    if passed == 'Yes':
+    try:
+        full_name = request.form['full_name']
+        last_name = request.form['last_name']
+        first_name = request.form['first_name']
+        middle_name = request.form['middle_name']
+        gender = request.form['gender']
+        profession_or_student = request.form['profession_or_student']
+        course = request.form['course']
+        school = request.form['school']
+        company_name = request.form['company_name']
+        position = request.form['position']
+        examination_date = request.form['examination_date']
+        exam_venue = request.form['exam_venue']
+        
+        # Check if the examinee passed the examination (you can use a checkbox or other input for this)
+        passed = request.form.get('passed', 'No')  # Default to 'No' if not checked
+        
+        conn = connection()
+        cur = conn.cursor()
+        
+        # Insert data into the 'examinees' table
         cur.execute("""
-            INSERT INTO 2023_ict_diagnostic_passers (full_name, last_name, first_name, 
-            middle_name, gender, course, school, company_name, position, examination_date, 
-            exam_venue, status)
+            INSERT INTO examinees (full_name, last_name, first_name, middle_name, gender, 
+            profession_or_student, course, school, company_name, position, examination_date, 
+            exam_venue)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, (full_name, last_name, first_name, middle_name, gender, 
-              course, school, company_name, position, 
-              examination_date, exam_venue, 'Passed'))
-    
-    conn.commit()
-    conn.close()
+              profession_or_student, course, school, company_name, position, 
+              examination_date, exam_venue))
+        
+        # Check if the examinee passed and insert into the '2023_ict_diagnostic_passers' table
+        if passed == 'Yes':
+            cur.execute("""
+                INSERT INTO 2023_ict_diagnostic_passers (full_name, last_name, first_name, 
+                middle_name, gender, course, school, company_name, position, examination_date, 
+                exam_venue, status)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (full_name, last_name, first_name, middle_name, gender, 
+                  course, school, company_name, position, 
+                  examination_date, exam_venue, 'Passed'))
+        
+        conn.commit()
+        conn.close()
 
-    flash('Examinee information has been recorded successfully.')
+        flash('Examinee information has been recorded successfully.')
+        
+        return redirect(url_for('examinees'))
+    except Exception as e:
+        # Handle exceptions, log the error, and display an error message to the user
+        print(str(e))  # Print the error message for debugging
+        flash('An error occurred while recording examinee information. Please try again.')
+        return redirect(url_for('examinees'))
 
-    return redirect(url_for('examinees'))
 
-
-
-
+# Update the '/examinees' route
 @app.route('/examinees', methods=['GET', 'POST'])
 def examinees():
     conn = connection()
     cur = conn.cursor()
     
     filter_value = request.args.get('filter', 'All')  # Get the filter value from the URL
+    page = request.args.get('page', 1, type=int)  # Get the page number from the URL
+    
+    per_page = 10  # Number of records to display per page
     
     if filter_value == 'All':
-        # Execute the SQL query to fetch all records
-        cur.execute("SELECT * FROM examinees")
+        # Execute the SQL query to fetch all records with pagination and sorting
+        cur.execute("""
+            SELECT * FROM examinees
+            ORDER BY full_name ASC  # You can change the sorting criteria
+            LIMIT %s OFFSET %s
+        """, (per_page, (page - 1) * per_page))
         examinees_data = cur.fetchall()
+        
+        # Calculate the total number of pages
+        cur.execute("SELECT COUNT(*) FROM examinees")
+        total_records = cur.fetchone()[0]
+        total_pages = (total_records + per_page - 1) // per_page
+        
         conn.close()  # Close the database connection
-        return render_template('examinees.html', examinees_data=examinees_data)
+        return render_template('examinees.html', examinees_data=examinees_data, page=page, total_pages=total_pages, filter=filter_value)
     
-    return redirect(url_for('examinees_passed'))
+    return redirect(url_for('examinees_passed', page=page, filter=filter_value))
+
 
 @app.route('/examinees/passed', methods=['GET', 'POST'])
 def examinees_passed():
