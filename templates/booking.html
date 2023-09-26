@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservation</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #e68f8f;
+            color: white;
+      }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="{{url_for('home')}}">MOFF'S</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav"
+            aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="{{url_for('home')}}">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{url_for('booking')}}">Book a Table</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <h1 class="text-center mb-4">Examinee Information</h1>
+            <form action="{{ url_for('booking_process') }}" method="POST">
+                <div class="form-group">
+                    <label for="full_name">Full Name</label>
+                    <input type="text" class="form-control" id="full_name" name="full_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="last_name">Last Name</label>
+                    <input type="text" class="form-control" id="last_name" name="last_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="first_name">First Name</label>
+                    <input type="text" class="form-control" id="first_name" name="first_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="middle_name">Middle Name</label>
+                    <input type="text" class="form-control" id="middle_name" name="middle_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="gender">Gender</label>
+                    <select class="form-control" id="gender" name="gender" required>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="profession_or_student">Professional/Student</label>
+                    <select class="form-control" id="profession_or_student" name="profession_or_student" required>
+                        <option value="Male">Professional</option>
+                        <option value="Female">Student</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="course">Course</label>
+                    <input type="text" class="form-control" id="course" name="course" required>
+                </div>
+                <div class="form-group">
+                    <label for="school">School</label>
+                    <input type="text" class="form-control" id="school" name="school" required>
+                </div>
+                <div class="form-group">
+                    <label for="company_name">Company Name</label>
+                    <input type="text" class="form-control" id="company_name" name="company_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="position">Position</label>
+                    <input type="text" class="form-control" id="position" name="position" >
+                </div>
+                <div class="form-group">
+                    <label for="examination_date">Examination Date</label>
+                    <input type="date" class="form-control" id="examination_date" name="examination_date" required>
+                </div>
+                <div class="form-group">
+                    <label for="exam_venue">Exam Venue</label>
+                    <select class="form-control" id="exam_venue" name="exam_venue" required>
+                        <option value="DICT Agusan Del Norte, Butuan City">DICT Agusan Del Norte, Butuan City</option>
+                        <option value="DTC San Francisco, Agusan Del Sur">DTC San Francisco, Agusan Del Sur</option>
+                        <option value="DTC Surigao Del Norte Provincial Office">DTC Surigao Del Norte Provincial Office</option>
+                        <option value="School/University">School/University</option>
+                        <option value="DICT Surigao Del Sur Provincial Office">DICT Surigao Del Sur Provincial Office</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="mark_passed">Mark as Passed:</label>
+                    <input type="checkbox" class="" id="mark_passed" name="mark_passed">
+                </div>
+                
+                <center>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </center>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Include Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Examinees</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="{{url_for('home')}}">MOFF'S</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="{{url_for('home')}}">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Contact</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{url_for('booking')}}">Book a Table</a>
+            </li>
+          </ul>
+        </div>
+    </nav>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <h1 class="text-center">Examinees</h1>
+                <form method="get" action="/examinees">
+                    <label for="filter">Filter Status:</label>
+                    <form method="get" action="/examinees">
+                        <label for="filter">Filter Status:</label>
+                        <select name="filter" id="filter">
+                            <option value="All">All</option>
+                            <option value="Passed">Passed</option>
+                            <!-- Add other filter options as needed -->
+                        </select>
+                        <button type="submit">Apply Filter</button>
+                    </form>
+                </form>
+                
+                <table class="table table-striped table-bordered">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Full Name</th>
+                                <th>Last Name</th>
+                                <th>First Name</th>
+                                <th>Middle Name</th>
+                                <th>Gender</th>
+                                <th>Profession/Student</th>
+                                <th>Course</th>
+                                <th>School</th>
+                                <th>Company Name</th>
+                                <th>Position</th>
+                                <th>Examination Date</th>
+                                <th>Exam Venue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for examinee in examinees_data %}
+                            <tr>
+                                <td>{{ examinee[13]}}</td>
+                                <td>{{ examinee[1] }}</td>
+                                <td>{{ examinee[2] }}</td>
+                                <td>{{ examinee[3] }}</td>
+                                <td>{{ examinee[4] }}</td>
+                                <td>{{ examinee[5] }}</td>
+                                <td>{{ examinee[6] }}</td>
+                                <td>{{ examinee[7] }}</td>
+                                <td>{{ examinee[8] }}</td>
+                                <td>{{ examinee[9] }}</td>
+                                <td>{{ examinee[10] }}</td>
+                                <td>{{ examinee[11] }}</td>
+                                <td>{{ examinee[12] }}</td>
+                                <td>
+                                    <a href="/examinee_delete/{{ examinee[0] }}" class="btn btn-danger btn-sm">Delete</a>
+                                    <a href="/examinee_update_one/{{ examinee[0] }}" class="btn btn-primary btn-sm">Update</a>
+                                </td>
+                            </tr>
+                            
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </table>
+                <div class="text-center">
+                    <a href="{{ url_for('booking') }}" class="btn btn-primary">Go back</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Include Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>

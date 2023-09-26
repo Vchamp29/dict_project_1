@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Page</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-6">
+                <h1 class="text-center mb-4">UPDATE PAGE</h1>
+                <form action="/examinee_update_two" method="POST">
+                    <input type="hidden" name="id" value="{{ data[0] }}">        
+                    <div class="form-group">
+                        <label for="full_name">Full Name</label>
+                        <input type="text" class="form-control" id="full_name" name="full_name" value="{{ data[1] }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="last_name">Last Name</label>
+                        <input type="text" class="form-control" id="last_name" name="last_name" value="{{ data[2] }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="first_name">First Name</label>
+                        <input type="text" class="form-control" id="first_name" name="first_name" value="{{ data[3] }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="middle_name">Middle Name</label>
+                        <input type="text" class="form-control" id="middle_name" name="middle_name" value="{{ data[4] }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="gender">Gender</label>
+                        <select class="form-control" id="gender" name="gender">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="profession_or_student">Professional/Student</label>
+                        <select class="form-control" id="profession_or_student" name="profession_or_student">
+                            <option value="Professional">Professional</option>
+                            <option value="Student">Student</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="course">Course</label>
+                        <input type="text" class="form-control" id="course" name="course" value="{{ data[6] }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="school">School</label>
+                        <input type="text" class="form-control" id="school" name="school" value="{{ data[7] }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="company_name">Company Name</label>
+                        <input type="text" class="form-control" id="company_name" name="company_name" value="{{ data[8] }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" class="form-control" id="position" name="position" value="{{ data[9] }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="examination_date">Examination Date</label>
+                        <input type="date" class="form-control" id="examination_date" name="examination_date" value="{{ data[10] }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="exam_venue">Exam Venue</label>
+                        <input type="text" class="form-control" id="exam_venue" name="exam_venue" value="{{ data[11] }}">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>
