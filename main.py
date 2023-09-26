@@ -126,7 +126,7 @@ def examinees():
     
     return redirect(url_for('examinees_passed', page=page, filter=filter_value))
 
-
+# Update the '/examinees/passed' route
 @app.route('/examinees/passed', methods=['GET', 'POST'])
 def examinees_passed():
     conn = connection()
@@ -135,9 +135,14 @@ def examinees_passed():
     # Execute the SQL query to fetch only "Passed" records
     cur.execute("SELECT * FROM 2023_ict_diagnostic_passers WHERE status = 'Passed'")
     examinees_data = cur.fetchall()
+    
+    # Since this route is specifically for "Passed" records, you can set page and total_pages to 1
+    page = 1
+    total_pages = 1
+    
     conn.close()  # Close the database connection
     
-    return render_template('examinees.html', examinees_data=examinees_data)
+    return render_template('examinees.html', examinees_data=examinees_data, page=page, total_pages=total_pages, filter='Passed')
 
 #login session
 @app.route('/login_process', methods=['GET', 'POST'])

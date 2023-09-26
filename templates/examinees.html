@@ -32,18 +32,18 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <h1 class="text-center">Examinees</h1>
-                <form method="get" action="/examinees">
-                    <label for="filter">Filter Status:</label>
                     <form method="get" action="/examinees">
                         <label for="filter">Filter Status:</label>
                         <select name="filter" id="filter">
                             <option value="All">All</option>
                             <option value="Passed">Passed</option>
                             <!-- Add other filter options as needed -->
+                        
                         </select>
+                        <button type="submit">Apply Filter</button>
                         <label for="search_query">Search:</label>
                         <input type="text" name="search_query" id="search_query">
-                        <button type="submit">Apply Filter/Search</button>
+                        <button type="submit">Search</button>
                     </form>
                     
                 </form>
@@ -52,6 +52,7 @@
                     <thead>
                         <tr>
                             <th>Status</th>
+                            <th>Examinee ID</th>
                             <th>Full Name</th>
                             <th>Last Name</th>
                             <th>First Name</th>
@@ -64,12 +65,14 @@
                             <th>Position</th>
                             <th>Examination Date</th>
                             <th>Exam Venue</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for examinee in examinees_data %}
                         <tr>
                             <td>{{ examinee[13]}}</td>
+                            <td>{{ examinee[0] }}</td>
                             <td>{{ examinee[1] }}</td>
                             <td>{{ examinee[2] }}</td>
                             <td>{{ examinee[3] }}</td>
