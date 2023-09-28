@@ -165,6 +165,60 @@ def examinees():
             ORDER BY full_name ASC
             LIMIT %s OFFSET %s
         """, ('%' + search_query + '%',) * 11 + (per_page, (page - 1) * per_page))
+    elif filter_value == 'UsersAssessmentExaminees':
+        # Execute the SQL query to fetch records from '2023_users_assessment_examinees' with pagination and sorting
+        cur.execute("""
+            SELECT * FROM 2023_users_assessment_examinees
+            WHERE full_name LIKE %s OR
+                  last_name LIKE %s OR
+                  first_name LIKE %s OR
+                  middle_name LIKE %s OR
+                  gender LIKE %s OR
+                  course LIKE %s OR
+                  school LIKE %s OR
+                  company_name LIKE %s OR
+                  position LIKE %s OR
+                  examination_date LIKE %s OR
+                  exam_venue LIKE %s
+            ORDER BY full_name ASC
+            LIMIT %s OFFSET %s
+        """, ('%' + search_query + '%',) * 11 + (per_page, (page - 1) * per_page))
+    elif filter_value == 'IctEdpExaminees':
+        # Execute the SQL query to fetch records from 'ict_edp_examinees' with pagination and sorting
+        cur.execute("""
+            SELECT * FROM ict_edp_examinees
+            WHERE full_name LIKE %s OR
+                  last_name LIKE %s OR
+                  first_name LIKE %s OR
+                  middle_name LIKE %s OR
+                  gender LIKE %s OR
+                  course LIKE %s OR
+                  school LIKE %s OR
+                  company_name LIKE %s OR
+                  position LIKE %s OR
+                  examination_date LIKE %s OR
+                  exam_venue LIKE %s
+            ORDER BY full_name ASC
+            LIMIT %s OFFSET %s
+        """, ('%' + search_query + '%',) * 11 + (per_page, (page - 1) * per_page))
+    elif filter_value == 'IctEdpPassers':
+        # Execute the SQL query to fetch records from 'ict_edp_passers' with pagination and sorting
+        cur.execute("""
+            SELECT * FROM ict_edp_passers
+            WHERE full_name LIKE %s OR
+                  last_name LIKE %s OR
+                  first_name LIKE %s OR
+                  middle_name LIKE %s OR
+                  gender LIKE %s OR
+                  course LIKE %s OR
+                  school LIKE %s OR
+                  company_name LIKE %s OR
+                  position LIKE %s OR
+                  examination_date LIKE %s OR
+                  exam_venue LIKE %s
+            ORDER BY full_name ASC
+            LIMIT %s OFFSET %s
+        """, ('%' + search_query + '%',) * 11 + (per_page, (page - 1) * per_page))
     else:
         # Invalid filter value, return an error or handle it as needed
         return "Invalid filter value"
@@ -193,7 +247,6 @@ def examinees():
     
     # Pass the search results data, filter, and search_query to the 'examinees.html' template
     return render_template('examinees.html', examinees_data=examinees_data, page=page, total_pages=total_pages, filter=filter_value, search_query=search_query)
-
 
 
 # Update the '/examinees/passed' route
