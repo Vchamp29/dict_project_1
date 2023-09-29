@@ -1,32 +1,50 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
-from flask_mysqldb import MySQLdb
+from functools import wraps
+from flask_mysqldb import MySQL
+
+
+
 
 app = Flask(__name__, static_url_path='/static')
 
+mysql = MySQL(app)
+
 app.secret_key = 'jezer-pala-sex'
 
-def connection():
-	try:
-		conn = MySQLdb.connect(host="localhost",user="root",password="",db="dict_database")
-		return conn
-	except Exception as e:
-		return str(e)
+# Decorator for protecting routes
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+#databse connection
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = ''
+app.config['MYSQL_DB'] = 'dict_database'
+mysql = MySQL(app)
 	
 @app.route('/payment')
+@login_required
 def payment():
 	return render_template('payments.html')
 
-@app.route('/login')
-def login():
-	return render_template('login.html')
-@app.route('/register')
-def register():
-	return render_template('insert.html')
+# @app.route('/login')
+# def login():
+# 	return render_template('login.html')
+# @app.route('/register')
+# def register():
+# 	return render_template('insert.html')
 @app.route('/')
+@login_required
 def home():
     return render_template('index.html')
 
 @app.route('/booking')
+@login_required
 def booking():
     return render_template('booking.html')
 
@@ -34,15 +52,21 @@ def booking():
 def congratulatory_message():
     return render_template('message.html')
 
+# Logout route
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('login'))
 
 @app.route('/menus')
+@login_required
 def menus():
     return render_template('menus.html')
 
 @app.route('/search', methods=['POST'])
 def search():
     search_query = request.form['search_query']
-    conn = connection()
+    conn = mysql.connection()
     cur = conn.cursor()
 
     # Execute a SQL query to search for examinees based on the search_query
@@ -76,7 +100,7 @@ def booking_process():
         # Check if the examinee passed the examination (you can use a checkbox or other input for this)
         passed = request.form.get('passed', 'No')  # Default to 'No' if not checked
         
-        conn = connection()
+        conn = mysql.connection()
         cur = conn.cursor()
         
         # Insert data into the 'examinees' table
@@ -115,7 +139,7 @@ def booking_process():
 
 @app.route('/examinees', methods=['GET', 'POST'])
 def examinees():
-    conn = connection()
+    conn = mysql.connection()
     cur = conn.cursor()
     
     # Get the filter value from the URL
@@ -252,7 +276,7 @@ def examinees():
 # Update the '/examinees/passed' route
 @app.route('/examinees/passed', methods=['GET', 'POST'])
 def examinees_passed():
-    conn = connection()
+    conn = mysql.connection()
     cur = conn.cursor()
     
     # Execute the SQL query to fetch only "Passed" records
@@ -267,44 +291,47 @@ def examinees_passed():
     
     return render_template('examinees.html', examinees_data=examinees_data, page=page, total_pages=total_pages, filter='Passed')
 
-#login session
-@app.route('/login_process', methods=['GET', 'POST'])
-def login_process():
-    if request.method == "POST":
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
         uname = request.form['username']
         pw = request.form['password']
 
-        conn = connection()
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM tbl_users WHERE USERNAME = '{}' AND PASSWORD = '{}'".format(uname, pw))
-        data = cur.fetchall()
+        cursor = mysql.connection.cursor()
+        cursor.execute("SELECT * FROM tbl_users WHERE USERNAME = %s AND PASSWORD = %s", (uname, pw))
+        data = cursor.fetchone()
+        cursor.close()
 
         if data:
             session['username'] = uname
             return redirect('/')
         else:
-            return "Login failed: username or password is incorrect"
+            flash('Login failed: username or password is incorrect', 'danger')
 
-#signup session
-@app.route('/insert_process', methods=['GET', 'POST'])
-def insert_process():
-	if request.method == "POST":
-		theID = request.form['user_id']
-		uname = request.form['username']
-		pw = request.form['password']
+    return render_template('login.html')
 
-		conn = connection()
-		cur = conn.cursor()
-		cur.execute("INSERT INTO tbl_users VALUES('{}' , '{}' , '{}')".format(theID, uname, pw))
-		conn.commit()
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        user_id = request.form['user_id']
+        uname = request.form['username']
+        pw = request.form['password']
 
-		return redirect("/congratulatory_message")
+        cursor = mysql.connection.cursor()
+        cursor.execute("INSERT INTO tbl_users (USER_ID, USERNAME, PASSWORD) VALUES (%s, %s, %s)", (user_id, uname, pw))
+        mysql.connection.commit()
+        cursor.close()
+
+        flash('Registration successful. You can now log in.', 'success')
+        return redirect('/login')
+
+    return render_template('insert.html')
 
 
 #fetching users to display in a table
 @app.route('/display')
 def display():
-	conn = connection()
+	conn = mysql.onnection()
 	cur = conn.cursor()
 	cur.execute("SELECT * FROM tbl_users")
 	data = cur.fetchall()
@@ -315,7 +342,7 @@ def display():
 @app.route('/delete_process/<string:id>/')
 def delete_process(id):
 
-	conn = connection()
+	conn = mysql.connection()
 	cur = conn.cursor()
 	cur.execute("DELETE FROM tbl_users WHERE USER_ID = '{}'".format(id))
 	conn.commit()
@@ -324,7 +351,7 @@ def delete_process(id):
 # Delete Examinee
 @app.route('/examinee_delete/<string:id>/')
 def examinee_delete(id):
-    conn = connection()
+    conn = mysql.connection()
     cur = conn.cursor()
     cur.execute("DELETE FROM examinees WHERE id = %s", (id,))
     conn.commit()
@@ -335,7 +362,7 @@ def examinee_delete(id):
 #update session
 @app.route('/update_process_one/<string:id>/')
 def update_process_one(id):
-	conn = connection()
+	conn = mysql.connection()
 	cur = conn.cursor()
 	cur.execute("SELECT * FROM tbl_users WHERE USER_ID = '{}'".format(id))
 	data = cur.fetchone()
@@ -347,7 +374,7 @@ def update_process_two():
     username = request.form['username']
     password = request.form['password']
     
-    conn = connection()
+    conn = mysql.connection()
     cur = conn.cursor()
     cur.execute("UPDATE tbl_users SET USER_ID = '{}', USERNAME = '{}', PASSWORD = '{}' WHERE USER_ID = '{}'".format(user_id, username, password, user_id))
     conn.commit()
@@ -356,7 +383,7 @@ def update_process_two():
 # Examinee Update One
 @app.route('/examinee_update_one/<string:id>/')
 def examinee_update_one(id):
-    conn = connection()
+    conn = mysql.connection()
     cur = conn.cursor()
     cur.execute("SELECT * FROM examinees WHERE id = %s", (id,))
     data = cur.fetchone()
@@ -381,7 +408,7 @@ def examinee_update_two():
     examination_date = request.form['examination_date']
     exam_venue = request.form['exam_venue']
 
-    conn = connection()
+    conn = mysql.connection()
     cur = conn.cursor()
 
     cur.execute("""
