@@ -1,13 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from functools import wraps
-from flask_mysqldb import MySQL
+from flask_mysqldb import MySQLdb
 
 
 
 
 app = Flask(__name__, static_url_path='/static')
 
-mysql = MySQL(app)
 
 app.secret_key = 'jezer-pala-sex'
 
@@ -20,12 +19,12 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-#databse connection
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'dict_database'
-mysql = MySQL(app)
+def connection():
+	try:
+		conn = MySQLdb.connect(host="localhost",user="root",password="",db="dict_database")
+		return conn
+	except Exception as e:
+		return str(e)
 	
 @app.route('/payment')
 @login_required
@@ -37,7 +36,8 @@ def payment():
 # 	return render_template('login.html')
 # @app.route('/register')
 # def register():
-# 	return render_template('insert.html')
+#     return render_template('insert.html')
+
 @app.route('/')
 @login_required
 def home():
@@ -66,7 +66,7 @@ def menus():
 @app.route('/search', methods=['POST'])
 def search():
     search_query = request.form['search_query']
-    conn = mysql.connection()
+    conn = connection()
     cur = conn.cursor()
 
     # Execute a SQL query to search for examinees based on the search_query
@@ -100,7 +100,7 @@ def booking_process():
         # Check if the examinee passed the examination (you can use a checkbox or other input for this)
         passed = request.form.get('passed', 'No')  # Default to 'No' if not checked
         
-        conn = mysql.connection()
+        conn = connection()
         cur = conn.cursor()
         
         # Insert data into the 'examinees' table
@@ -139,7 +139,7 @@ def booking_process():
 
 @app.route('/examinees', methods=['GET', 'POST'])
 def examinees():
-    conn = mysql.connection()
+    conn = connection()
     cur = conn.cursor()
     
     # Get the filter value from the URL
@@ -276,7 +276,7 @@ def examinees():
 # Update the '/examinees/passed' route
 @app.route('/examinees/passed', methods=['GET', 'POST'])
 def examinees_passed():
-    conn = mysql.connection()
+    conn = connection()
     cur = conn.cursor()
     
     # Execute the SQL query to fetch only "Passed" records
@@ -297,7 +297,7 @@ def login():
         uname = request.form['username']
         pw = request.form['password']
 
-        cursor = mysql.connection.cursor()
+        cursor = connection.cursor()
         cursor.execute("SELECT * FROM tbl_users WHERE USERNAME = %s AND PASSWORD = %s", (uname, pw))
         data = cursor.fetchone()
         cursor.close()
@@ -310,6 +310,29 @@ def login():
 
     return render_template('login.html')
 
+@app.route('/login_process', methods=['POST'])
+def login_process():
+    if request.method == 'POST':
+        uname = request.form['username']
+        pw = request.form['password']
+
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM tbl_users WHERE USERNAME = %s AND PASSWORD = %s", (uname, pw))
+        data = cursor.fetchone()
+        cursor.close()
+
+        if data:
+            session['username'] = uname
+            return redirect('/')
+        else:
+            flash('Login failed: username or password is incorrect', 'danger')
+
+# You can also have a GET route for /login_process if needed
+@app.route('/login_process', methods=['GET'])
+def login_process_get():
+    # Handle GET requests for /login_process if necessary
+    pass
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -317,10 +340,12 @@ def register():
         uname = request.form['username']
         pw = request.form['password']
 
-        cursor = mysql.connection.cursor()
+        conn = connection()  # Establish a MySQL connection using the 'connection()' function
+        cursor = conn.cursor()
+        
         cursor.execute("INSERT INTO tbl_users (USER_ID, USERNAME, PASSWORD) VALUES (%s, %s, %s)", (user_id, uname, pw))
-        mysql.connection.commit()
-        cursor.close()
+        conn.commit()
+        conn.close()  # Close the database connection
 
         flash('Registration successful. You can now log in.', 'success')
         return redirect('/login')
@@ -328,10 +353,11 @@ def register():
     return render_template('insert.html')
 
 
+
 #fetching users to display in a table
 @app.route('/display')
 def display():
-	conn = mysql.onnection()
+	conn = connection()
 	cur = conn.cursor()
 	cur.execute("SELECT * FROM tbl_users")
 	data = cur.fetchall()
@@ -342,7 +368,7 @@ def display():
 @app.route('/delete_process/<string:id>/')
 def delete_process(id):
 
-	conn = mysql.connection()
+	conn = connection()
 	cur = conn.cursor()
 	cur.execute("DELETE FROM tbl_users WHERE USER_ID = '{}'".format(id))
 	conn.commit()
@@ -351,7 +377,7 @@ def delete_process(id):
 # Delete Examinee
 @app.route('/examinee_delete/<string:id>/')
 def examinee_delete(id):
-    conn = mysql.connection()
+    conn = connection()
     cur = conn.cursor()
     cur.execute("DELETE FROM examinees WHERE id = %s", (id,))
     conn.commit()
@@ -362,7 +388,7 @@ def examinee_delete(id):
 #update session
 @app.route('/update_process_one/<string:id>/')
 def update_process_one(id):
-	conn = mysql.connection()
+	conn = connection()
 	cur = conn.cursor()
 	cur.execute("SELECT * FROM tbl_users WHERE USER_ID = '{}'".format(id))
 	data = cur.fetchone()
@@ -374,7 +400,7 @@ def update_process_two():
     username = request.form['username']
     password = request.form['password']
     
-    conn = mysql.connection()
+    conn = connection()
     cur = conn.cursor()
     cur.execute("UPDATE tbl_users SET USER_ID = '{}', USERNAME = '{}', PASSWORD = '{}' WHERE USER_ID = '{}'".format(user_id, username, password, user_id))
     conn.commit()
@@ -383,7 +409,7 @@ def update_process_two():
 # Examinee Update One
 @app.route('/examinee_update_one/<string:id>/')
 def examinee_update_one(id):
-    conn = mysql.connection()
+    conn = connection()
     cur = conn.cursor()
     cur.execute("SELECT * FROM examinees WHERE id = %s", (id,))
     data = cur.fetchone()
@@ -408,7 +434,7 @@ def examinee_update_two():
     examination_date = request.form['examination_date']
     exam_venue = request.form['exam_venue']
 
-    conn = mysql.connection()
+    conn = connection()
     cur = conn.cursor()
 
     cur.execute("""
