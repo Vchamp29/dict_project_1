@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from functools import wraps
 from flask_mysqldb import MySQLdb
+import bcrypt
 
 
 
@@ -8,7 +9,7 @@ from flask_mysqldb import MySQLdb
 app = Flask(__name__, static_url_path='/static')
 
 
-app.secret_key = 'jezer-pala-sex'
+app.secret_key = '8a2f7d1e9c3b6f05d9a8e47b1c9835e03f47d5f4a6316ec9a81ec97a01a8d74a'
 
 # Decorator for protecting routes
 def login_required(f):
@@ -26,11 +27,6 @@ def connection():
 	except Exception as e:
 		return str(e)
 	
-@app.route('/payment')
-@login_required
-def payment():
-	return render_template('payments.html')
-
 # @app.route('/login')
 # def login():
 # 	return render_template('login.html')
@@ -58,10 +54,7 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('login'))
 
-@app.route('/menus')
-@login_required
-def menus():
-    return render_template('menus.html')
+
 
 @app.route('/search', methods=['POST'])
 def search():
@@ -76,10 +69,21 @@ def search():
     """, ('%' + search_query + '%', '%' + search_query + '%'))
 
     search_results = cur.fetchall()
-    conn.close()
+    
+    # Calculate the total number of records and pages
+    total_records = len(search_results)
+    per_page = 10  # Number of records to display per page (adjust as needed)
+    total_pages = (total_records + per_page - 1) // per_page
+    
+    conn.close()  # Close the database connection
 
-    # Pass the search results data to the 'examinees.html' template
-    return render_template('examinees.html', examinees_data=search_results)
+    # You can set page to 1 since it's not a paginated search
+    page = 1
+
+    # Pass the search results data, page, and total_pages to the 'examinees.html' template
+    return render_template('examinees.html', examinees_data=search_results, page=page, total_pages=total_pages)
+
+
 
 @app.route('/booking_process', methods=['POST'])
 def booking_process():
@@ -100,29 +104,41 @@ def booking_process():
         # Check if the examinee passed the examination (you can use a checkbox or other input for this)
         passed = request.form.get('passed', 'No')  # Default to 'No' if not checked
         
+        # Map table labels based on the selected table
+        table_labels = {
+            'examinees': 'Examinees',
+            '2023_ict_diagnostic_passers': 'Dict Diag. Examinee',
+            '2023_users_assessment_examinees': 'Users Assessment Examinee',
+            'ict_edp_examinees': 'ICT EDP Examinee',
+            'ict_edp_passers': 'ICT EDP Passer',
+        }
+        
         conn = connection()
         cur = conn.cursor()
         
-        # Insert data into the 'examinees' table
-        cur.execute("""
-            INSERT INTO examinees (full_name, last_name, first_name, middle_name, gender, 
+        # Insert data into the selected table
+        selected_table = request.form['table_selection']
+        table_label = table_labels.get(selected_table, 'Unknown')  # Get the table label
+        cur.execute(f"""
+            INSERT INTO {selected_table} (full_name, last_name, first_name, middle_name, gender, 
             profession_or_student, course, school, company_name, position, examination_date, 
-            exam_venue)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            exam_venue, label)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, (full_name, last_name, first_name, middle_name, gender, 
               profession_or_student, course, school, company_name, position, 
-              examination_date, exam_venue))
+              examination_date, exam_venue, table_label))
         
-        # Check if the examinee passed and insert into the '2023_ict_diagnostic_passers' table
+        # Check if the examinee passed and insert into the corresponding passers table
         if passed == 'Yes':
-            cur.execute("""
-                INSERT INTO 2023_ict_diagnostic_passers (full_name, last_name, first_name, 
+            passers_table = f'{selected_table}_passers'
+            cur.execute(f"""
+                INSERT INTO {passers_table} (full_name, last_name, first_name, 
                 middle_name, gender, course, school, company_name, position, examination_date, 
-                exam_venue, status)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                exam_venue, label, status)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """, (full_name, last_name, first_name, middle_name, gender, 
                   course, school, company_name, position, 
-                  examination_date, exam_venue, 'Passed'))
+                  examination_date, exam_venue, table_label, 'Passed'))
         
         conn.commit()
         conn.close()
@@ -272,7 +288,6 @@ def examinees():
     # Pass the search results data, filter, and search_query to the 'examinees.html' template
     return render_template('examinees.html', examinees_data=examinees_data, page=page, total_pages=total_pages, filter=filter_value, search_query=search_query)
 
-
 # Update the '/examinees/passed' route
 @app.route('/examinees/passed', methods=['GET', 'POST'])
 def examinees_passed():
@@ -298,11 +313,11 @@ def login():
         pw = request.form['password']
 
         cursor = connection.cursor()
-        cursor.execute("SELECT * FROM tbl_users WHERE USERNAME = %s AND PASSWORD = %s", (uname, pw))
-        data = cursor.fetchone()
+        cursor.execute("SELECT PASSWORD FROM tbl_users WHERE USERNAME = %s", (uname,))
+        hashed_password = cursor.fetchone()
         cursor.close()
 
-        if data:
+        if hashed_password and bcrypt.checkpw(pw.encode('utf-8'), hashed_password[0].encode('utf-8')):
             session['username'] = uname
             return redirect('/')
         else:
@@ -316,22 +331,31 @@ def login_process():
         uname = request.form['username']
         pw = request.form['password']
 
-        cursor = connection.cursor()
-        cursor.execute("SELECT * FROM tbl_users WHERE USERNAME = %s AND PASSWORD = %s", (uname, pw))
-        data = cursor.fetchone()
-        cursor.close()
+        conn = connection()  # Obtain a database connection object
+        if isinstance(conn, str):  # Check if there was an error in the connection
+            flash('Database connection error: ' + conn, 'danger')
+            return redirect('/login')
 
-        if data:
+        cursor = conn.cursor()
+        cursor.execute("SELECT PASSWORD FROM tbl_users WHERE USERNAME = %s", (uname,))
+        hashed_password = cursor.fetchone()
+        cursor.close()
+        conn.close()  # Close the database connection
+
+        if hashed_password and bcrypt.checkpw(pw.encode('utf-8'), hashed_password[0].encode('utf-8')):
             session['username'] = uname
             return redirect('/')
         else:
             flash('Login failed: username or password is incorrect', 'danger')
+
+
 
 # You can also have a GET route for /login_process if needed
 @app.route('/login_process', methods=['GET'])
 def login_process_get():
     # Handle GET requests for /login_process if necessary
     pass
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -340,10 +364,13 @@ def register():
         uname = request.form['username']
         pw = request.form['password']
 
+        # Hash the user's password using bcrypt
+        hashed_password = bcrypt.hashpw(pw.encode('utf-8'), bcrypt.gensalt())
+
         conn = connection()  # Establish a MySQL connection using the 'connection()' function
         cursor = conn.cursor()
         
-        cursor.execute("INSERT INTO tbl_users (USER_ID, USERNAME, PASSWORD) VALUES (%s, %s, %s)", (user_id, uname, pw))
+        cursor.execute("INSERT INTO tbl_users (USER_ID, USERNAME, PASSWORD) VALUES (%s, %s, %s)", (user_id, uname, hashed_password))
         conn.commit()
         conn.close()  # Close the database connection
 
@@ -351,6 +378,7 @@ def register():
         return redirect('/login')
 
     return render_template('insert.html')
+
 
 
 

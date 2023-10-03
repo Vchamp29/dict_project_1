@@ -148,7 +148,19 @@ hr {
   }
   .text--center {
     text-align: center;
+    color: white; /* Set the default link color to white */
   }
+  
+  .text--center a {
+    text-decoration: none; /* Remove the underline */
+    color: white; /* Set the link color to white */
+    transition: color 0.3s; /* Add a smooth color transition */
+  }
+  
+  .text--center a:hover {
+    color: blue; /* Change the link color to blue on hover */
+  }
+  
   
   .menu-box {
     border: 1px solid #ddd;

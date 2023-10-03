@@ -8,9 +8,12 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <style>
         body {
-            background-color: #e68f8f;
-            color: white;
-      }
+            background-color: #f7f7f7;
+            color: black; /* Set text color to black */
+        }
+        .examinee-information {
+            color: black; /* Set text color to black */
+        }
     </style>
 </head>
 <body>
@@ -32,12 +35,23 @@
     </div>
 </nav>
 
-
 <div class="container">
     <div class="row justify-content-center mt-5">
         <div class="col-md-6">
-            <h1 class="text-center mb-4">Examinee Information</h1>
+            <h1 class="text-center mb-4">
+                <p class="examinee-information">Examinee Information</p>
+            </h1>
             <form action="{{ url_for('booking_process') }}" method="POST">
+                <div class="form-group">
+                    <label for="table_selection">
+                        <a class="select-table">Select Table</a>
+                    </label>
+                    <select class="form-control" id="table_selection" name="table_selection" required>
+                        <option value="examinees">2023 DICT ICT Diagnostic Examinees</option>
+                        <option value="2023_users_assessment_examinees">2023 Users Assessment Examinees</option>
+                        <option value="ict_edp_examinees">ICT EDP Examinees</option>
+                    </select>
+                </div>     
                 <div class="form-group">
                     <label for="full_name">Full Name</label>
                     <input type="text" class="form-control" id="full_name" name="full_name" required>
@@ -64,8 +78,8 @@
                 <div class="form-group">
                     <label for="profession_or_student">Professional/Student</label>
                     <select class="form-control" id="profession_or_student" name="profession_or_student" required>
-                        <option value="Male">Professional</option>
-                        <option value="Female">Student</option>
+                        <option value="Professional">Professional</option>
+                        <option value="Student">Student</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -82,12 +96,12 @@
                 </div>
                 <div class="form-group">
                     <label for="position">Position</label>
-                    <input type="text" class="form-control" id="position" name="position" >
+                    <input type="text" class="form-control" id="position" name="position">
                 </div>
                 <div class="form-group">
-                    <label for="examination_date">Examination Date</label>
-                    <input type="date" class="form-control" id="examination_date" name="examination_date" required>
-                </div>
+                    <label for="examination_date">Examination Date (Month Day, Year)</label>
+                    <input type="text" class="form-control" id="examination_date" name="examination_date" placeholder="Enter Date" required>
+                </div>                
                 <div class="form-group">
                     <label for="exam_venue">Exam Venue</label>
                     <select class="form-control" id="exam_venue" name="exam_venue" required>
@@ -102,6 +116,7 @@
                     <label for="mark_passed">Mark as Passed:</label>
                     <input type="checkbox" class="" id="mark_passed" name="passed" value="Yes">
                 </div>                
+                           
                 <center>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </center>
