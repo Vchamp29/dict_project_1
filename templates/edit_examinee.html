@@ -2,35 +2,113 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Page</title>
-
-    <!-- Bootstrap CSS -->
+    <title>Edit Examinee</title>
+    <!-- Include Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f7f7f7;
+            color: black;
+        }
+        .examinee-information {
+            color: black;
+        }
+        .navbar {
+        background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .navbar-brand {
+            font-size: 24px;
+        }
+
+        .navbar-toggler-icon {
+            background-color: white;
+        }
+
+        .nav-item {
+            margin-right: 20px;
+        }
+
+        .nav-link {
+            color: white;
+            font-size: 18px;
+        }
+
+        /* Form Styling */
+        .container {
+            margin-top: 50px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .btn-primary {
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="/">DICT Caraga</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/booking">Insert Process</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/examinees">Examinees</a>
+                </li>
+            </ul>
+            <!-- Add session username display here if needed -->
+        </div>
+    </nav>
+
     <div class="container">
-        <div class="row justify-content-center mt-5">
+        <div class="row justify-content-center">
             <div class="col-md-6">
-                <h1 class="text-center mb-4">UPDATE PAGE</h1>
+                <h1 class="text-center mb-4">
+                    <p class="examinee-information">Edit Examinee Information</p>
+                </h1>
                 <form action="/examinee_update_two" method="POST">
-                    <input type="hidden" name="id" value="{{ data[0] }}">        
+                    <input type="hidden" name="id" value="{{ data[0] }}">
+                    <!-- Include fields for editing examinee information -->
+                    <div class="form-group">
+                        <label for="table_selection">
+                            <a class="select-table">Select Table</a>
+                        </label>
+                        <select class="form-control" id="table_selection" name="table_selection" required>
+                            <option value="examinees">2023 DICT ICT Diagnostic Examinees</option>
+                            <option value="2023_users_assessment_examinees">2023 Users Assessment Examinees</option>
+                            <option value="ict_edp_examinees">ICT EDP Examinees</option>
+                            <option value="ict_edp_passers">ICT EDP Passers</option>
+                            <option value="2023_ict_diagnostic_passers">2023 ICT Diagnostic Passers</option>
+
+                        </select>
+                    </div>     
                     <div class="form-group">
                         <label for="full_name">Full Name</label>
-                        <input type="text" class="form-control" id="full_name" name="full_name" value="{{ data[1] }}">
+                        <input type="text" class="form-control" id="full_name" name="full_name" value="{{ data[2] }}">
                     </div>
                     <div class="form-group">
                         <label for="last_name">Last Name</label>
-                        <input type="text" class="form-control" id="last_name" name="last_name" value="{{ data[2] }}">
+                        <input type="text" class="form-control" id="last_name" name="last_name" value="{{ data[3] }}">
                     </div>
                     <div class="form-group">
                         <label for="first_name">First Name</label>
-                        <input type="text" class="form-control" id="first_name" name="first_name" value="{{ data[3] }}">
+                        <input type="text" class="form-control" id="first_name" name="first_name" value="{{ data[4] }}">
                     </div>
                     <div class="form-group">
                         <label for="middle_name">Middle Name</label>
-                        <input type="text" class="form-control" id="middle_name" name="middle_name" value="{{ data[4] }}">
+                        <input type="text" class="form-control" id="middle_name" name="middle_name" value="{{ data[5] }}">
                     </div>
                     <div class="form-group">
                         <label for="gender">Gender</label>
@@ -70,13 +148,17 @@
                         <label for="exam_venue">Exam Venue</label>
                         <input type="text" class="form-control" id="exam_venue" name="exam_venue" value="{{ data[11] }}">
                     </div>
+                    <div class="form-group">
+                        <label for="mark_passed">Mark as Passed:</label>
+                        <input type="checkbox" class="" id="mark_passed" name="passed" value="Yes">
+                    </div>
                     <button type="submit" class="btn btn-primary">Update</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
+    <!-- Include Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>

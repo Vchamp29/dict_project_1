@@ -445,41 +445,62 @@ def examinee_update_one(id):
     return render_template('edit_examinee.html', data=data)
 
 
-# Examinee Update Two
+# Updated examinee_update handle
 @app.route('/examinee_update_two', methods=['POST'])
 def examinee_update_two():
-    examinee_id = request.form['id']  # Change 'examinee_id' to 'id'
-    full_name = request.form['full_name']
-    last_name = request.form['last_name']
-    first_name = request.form['first_name']
-    middle_name = request.form['middle_name']
-    gender = request.form['gender']
-    profession_or_student = request.form['profession_or_student']
-    course = request.form['course']
-    school = request.form['school']
-    company_name = request.form['company_name']
-    position = request.form['position']
-    examination_date = request.form['examination_date']
-    exam_venue = request.form['exam_venue']
+    try:
+        examinee_id = request.form['id']
+        full_name = request.form['full_name']
+        last_name = request.form['last_name']
+        first_name = request.form['first_name']
+        middle_name = request.form['middle_name']
+        gender = request.form['gender']
+        profession_or_student = request.form['profession_or_student']
+        course = request.form['course']
+        school = request.form['school']
+        company_name = request.form['company_name']
+        position = request.form['position']
+        examination_date = request.form['examination_date']
+        exam_venue = request.form['exam_venue']
+        
+        # Check if the selected label corresponds to a 'passers' table
+        selected_table = request.form['table_selection']
+        passers_tables = ['ict_edp_passers', '2023_ict_diagnostic_passers']  # Add your additional 'passers' tables here
+        
+        conn = connection()
+        cur = conn.cursor()
+        
+        cur.execute("""
+            UPDATE examinees 
+            SET full_name = %s, last_name = %s, first_name = %s, middle_name = %s, gender = %s, 
+                profession_or_student = %s, course = %s, school = %s, company_name = %s, position = %s, 
+                examination_date = %s, exam_venue = %s
+            WHERE id = %s
+        """, (full_name, last_name, first_name, middle_name, gender, profession_or_student, course,
+              school, company_name, position, examination_date, exam_venue, examinee_id))
+        
+        if selected_table in passers_tables:
+            # Check if the examinee passed and update the status in 'passers' table
+            passed = request.form.get('passed', 'No')  # Default to 'No' if not checked
+            if passed == 'Yes':
+                cur.execute(f"""
+                    UPDATE {selected_table}
+                    SET status = 'Passed'
+                    WHERE id = %s
+                """, (examinee_id,))
+        
+        conn.commit()
+        conn.close()
 
-    conn = connection()
-    cur = conn.cursor()
+        flash('Examinee information has been updated successfully.')
+        
+        return redirect(url_for('examinees'))
+    except Exception as e:
+        # Handle exceptions, log the error, and display an error message to the user
+        print(str(e))  # Print the error message for debugging
+        flash('An error occurred while updating examinee information. Please try again.')
+        return redirect(url_for('examinees'))
 
-    cur.execute("""
-        UPDATE examinees 
-        SET full_name = %s, last_name = %s, first_name = %s, middle_name = %s, gender = %s, 
-            profession_or_student = %s, course = %s, school = %s, company_name = %s, position = %s, 
-            examination_date = %s, exam_venue = %s
-        WHERE id = %s  # Use 'id' here
-    """, (full_name, last_name, first_name, middle_name, gender, profession_or_student, course,
-          school, company_name, position, examination_date, exam_venue, examinee_id))  # Change 'id' to 'examinee_id'
-
-    conn.commit()
-    conn.close()
-
-    flash('Examinee information has been updated successfully.')
-
-    return redirect(url_for('examinees'))
 
 
 if __name__ == '__main__':
