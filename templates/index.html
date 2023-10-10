@@ -127,6 +127,7 @@
     .navbar-nav .username {
         margin-left: auto;
     }
+    
   </style>
 </head>
 <body>
@@ -186,6 +187,41 @@
     </div>
   </div>
 </div>
+<!-- Add this input field in your HTML for the search query -->
+<input type="text" id="search-query" placeholder="Search Examinees">
+
+<!-- Add a div to display the search results -->
+<div id="search-results">
+    <!-- Search results will be displayed here -->
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Add an event listener for the input field
+        $('#search-query').on('input', function () {
+            // Get the search query from the input field
+            var searchQuery = $(this).val();
+
+            // Send an AJAX request to the /search route
+            $.ajax({
+                type: 'POST',
+                url: '/search',
+                data: { search_query: searchQuery },
+                success: function (data) {
+                    // Update the search results container with data.examinees_data
+                    // You can use data.page and data.filter as needed
+                    var resultsHtml = '';  // Build your HTML here based on the data
+                    $('#search-results').html(resultsHtml);
+                },
+                error: function (error) {
+                    // Handle errors
+                    console.error(error);
+                }
+            });
+        });
+    });
+</script>
 
 <div class="container">
     <div class="row custom-color">

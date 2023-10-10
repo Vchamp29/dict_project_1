@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from functools import wraps
 from flask_mysqldb import MySQLdb
 import bcrypt
@@ -26,7 +26,7 @@ def connection():
 		return conn
 	except Exception as e:
 		return str(e)
-	
+
 # @app.route('/login')
 # def login():
 # 	return render_template('login.html')
@@ -58,30 +58,12 @@ def logout():
 
 @app.route('/search', methods=['POST'])
 def search():
-    search_query = request.form['search_query']
-    conn = connection()
-    cur = conn.cursor()
-
-    # Execute a SQL query to search for examinees based on the search_query
-    cur.execute("""
-        SELECT * FROM examinees
-        WHERE full_name LIKE %s OR course LIKE %s
-    """, ('%' + search_query + '%', '%' + search_query + '%'))
-
-    search_results = cur.fetchall()
-    
-    # Calculate the total number of records and pages
-    total_records = len(search_results)
-    per_page = 10  # Number of records to display per page (adjust as needed)
-    total_pages = (total_records + per_page - 1) // per_page
-    
-    conn.close()  # Close the database connection
-
-    # You can set page to 1 since it's not a paginated search
-    page = 1
-
-    # Pass the search results data, page, and total_pages to the 'examinees.html' template
-    return render_template('examinees.html', examinees_data=search_results, page=page, total_pages=total_pages)
+    try:
+        search_query = request.form.get('query')
+        result = search_database(search_query)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)})
 
 
 
@@ -153,138 +135,91 @@ def booking_process():
         return redirect(url_for('examinees'))
 
 
+
+
+
+def search_database(query):
+    conn = connection()  # Establish a database connection
+    cursor = conn.cursor()
+
+    dict_database = {}
+
+    # Tables to search in
+    tables_to_search = [
+        '2023_ict_diagnostic_passers',
+        '2023_users_assessment_examinees',
+        'examinees',
+        'ict_edp_examinees',
+        'ict_edp_passers'
+    ]
+
+    for table in tables_to_search:
+        # Check if the table has a 'status' column
+        cursor.execute(f"SHOW COLUMNS FROM {table} LIKE 'status'")
+        status_column_exists = cursor.fetchone()
+
+        if status_column_exists:
+            # If the 'status' column exists, perform the search on multiple columns
+            cursor.execute(f"SELECT * FROM {table} WHERE status LIKE %s OR full_name LIKE %s OR school LIKE %s OR exam_venue LIKE %s OR profession_or_student LIKE %s OR course LIKE %s OR company_name LIKE %s OR position LIKE %s OR examination_date LIKE %s",
+                           ('%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%'))
+            results = cursor.fetchall()
+            dict_database[table] = results
+        else:
+            # If the 'status' column doesn't exist, check for other fields like names, schools, and exam venues
+            cursor.execute(f"SELECT * FROM {table} WHERE full_name LIKE %s OR school LIKE %s OR exam_venue LIKE %s OR profession_or_student LIKE %s OR course LIKE %s OR company_name LIKE %s OR position LIKE %s OR examination_date LIKE %s",
+                           ('%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%'))
+            results = cursor.fetchall()
+            dict_database[table] = results
+
+    conn.close()
+    return dict_database
+
 @app.route('/examinees', methods=['GET', 'POST'])
 def examinees():
     conn = connection()
     cur = conn.cursor()
-    
+
     # Get the filter value from the URL
     filter_value = request.args.get('filter', 'All')
-    
+
     # Get the search query from the URL
     search_query = request.args.get('search_query', '')
-    
+
     # Get the page parameter from the URL or set it to 1 by default
     page = request.args.get('page', 1, type=int)
-    
+
     per_page = 10  # Number of records to display per page
-    
-    if filter_value == 'All':
-        # Execute the SQL query to fetch all records from 'examinees' with pagination and sorting
-        cur.execute("""
-            SELECT * FROM examinees
-            WHERE full_name LIKE %s OR
-                  last_name LIKE %s OR
-                  first_name LIKE %s OR
-                  middle_name LIKE %s OR
-                  gender LIKE %s OR
-                  course LIKE %s OR
-                  school LIKE %s OR
-                  company_name LIKE %s OR
-                  position LIKE %s OR
-                  examination_date LIKE %s OR
-                  exam_venue LIKE %s
-            ORDER BY full_name ASC
-            LIMIT %s OFFSET %s
-        """, ('%' + search_query + '%',) * 11 + (per_page, (page - 1) * per_page))
-    elif filter_value == 'Passed':
-        # Execute the SQL query to fetch only "Passed" records from '2023_ict_diagnostic_passers' with pagination and sorting
-        cur.execute("""
-            SELECT * FROM 2023_ict_diagnostic_passers
-            WHERE status = 'Passed' AND (full_name LIKE %s OR
-                                         last_name LIKE %s OR
-                                         first_name LIKE %s OR
-                                         middle_name LIKE %s OR
-                                         gender LIKE %s OR
-                                         course LIKE %s OR
-                                         school LIKE %s OR
-                                         company_name LIKE %s OR
-                                         position LIKE %s OR
-                                         examination_date LIKE %s OR
-                                         exam_venue LIKE %s)
-            ORDER BY full_name ASC
-            LIMIT %s OFFSET %s
-        """, ('%' + search_query + '%',) * 11 + (per_page, (page - 1) * per_page))
-    elif filter_value == 'UsersAssessmentExaminees':
-        # Execute the SQL query to fetch records from '2023_users_assessment_examinees' with pagination and sorting
-        cur.execute("""
-            SELECT * FROM 2023_users_assessment_examinees
-            WHERE full_name LIKE %s OR
-                  last_name LIKE %s OR
-                  first_name LIKE %s OR
-                  middle_name LIKE %s OR
-                  gender LIKE %s OR
-                  course LIKE %s OR
-                  school LIKE %s OR
-                  company_name LIKE %s OR
-                  position LIKE %s OR
-                  examination_date LIKE %s OR
-                  exam_venue LIKE %s
-            ORDER BY full_name ASC
-            LIMIT %s OFFSET %s
-        """, ('%' + search_query + '%',) * 11 + (per_page, (page - 1) * per_page))
-    elif filter_value == 'IctEdpExaminees':
-        # Execute the SQL query to fetch records from 'ict_edp_examinees' with pagination and sorting
-        cur.execute("""
-            SELECT * FROM ict_edp_examinees
-            WHERE full_name LIKE %s OR
-                  last_name LIKE %s OR
-                  first_name LIKE %s OR
-                  middle_name LIKE %s OR
-                  gender LIKE %s OR
-                  course LIKE %s OR
-                  school LIKE %s OR
-                  company_name LIKE %s OR
-                  position LIKE %s OR
-                  examination_date LIKE %s OR
-                  exam_venue LIKE %s
-            ORDER BY full_name ASC
-            LIMIT %s OFFSET %s
-        """, ('%' + search_query + '%',) * 11 + (per_page, (page - 1) * per_page))
-    elif filter_value == 'IctEdpPassers':
-        # Execute the SQL query to fetch records from 'ict_edp_passers' with pagination and sorting
-        cur.execute("""
-            SELECT * FROM ict_edp_passers
-            WHERE full_name LIKE %s OR
-                  last_name LIKE %s OR
-                  first_name LIKE %s OR
-                  middle_name LIKE %s OR
-                  gender LIKE %s OR
-                  course LIKE %s OR
-                  school LIKE %s OR
-                  company_name LIKE %s OR
-                  position LIKE %s OR
-                  examination_date LIKE %s OR
-                  exam_venue LIKE %s
-            ORDER BY full_name ASC
-            LIMIT %s OFFSET %s
-        """, ('%' + search_query + '%',) * 11 + (per_page, (page - 1) * per_page))
-    else:
-        # Invalid filter value, return an error or handle it as needed
-        return "Invalid filter value"
-    
-    examinees_data = cur.fetchall()
-    
-    # Calculate the total number of pages based on the total number of records
-    cur.execute("""
+
+    # Define the columns to search in
+    columns_to_search = [
+        'full_name', 'last_name', 'first_name', 'middle_name', 'gender',
+        'course', 'school', 'company_name', 'position', 'examination_date', 'exam_venue'
+    ]
+
+    # Construct the SQL query for searching in multiple columns
+    sql_query = f"""
+        SELECT * FROM examinees
+        WHERE {' OR '.join([f'{column} LIKE %s' for column in columns_to_search])}
+    """
+
+    # Construct the SQL query for counting total records
+    count_query = f"""
         SELECT COUNT(*) FROM examinees
-        WHERE full_name LIKE %s OR
-              last_name LIKE %s OR
-              first_name LIKE %s OR
-              middle_name LIKE %s OR
-              gender LIKE %s OR
-              course LIKE %s OR
-              school LIKE %s OR
-              company_name LIKE %s OR
-              position LIKE %s OR
-              examination_date LIKE %s OR
-              exam_venue LIKE %s
-    """, ('%' + search_query + '%',) * 11)
+        WHERE {' OR '.join([f'{column} LIKE %s' for column in columns_to_search])}
+    """
+
+    # Execute the SQL query to fetch records with pagination and sorting
+    cur.execute(sql_query + f" ORDER BY full_name ASC LIMIT %s OFFSET %s",
+                (['%' + search_query + '%'] * len(columns_to_search)) + [per_page, (page - 1) * per_page])
+    examinees_data = cur.fetchall()
+
+    # Execute the SQL query to count total records
+    cur.execute(count_query, (['%' + search_query + '%'] * len(columns_to_search)))
     total_records = cur.fetchone()[0]
     total_pages = (total_records + per_page - 1) // per_page
-    
+
     conn.close()  # Close the database connection
-    
+
     # Pass the search results data, filter, and search_query to the 'examinees.html' template
     return render_template('examinees.html', examinees_data=examinees_data, page=page, total_pages=total_pages, filter=filter_value, search_query=search_query)
 
