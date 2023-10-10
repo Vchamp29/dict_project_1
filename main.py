@@ -348,13 +348,8 @@ def login_process():
         else:
             flash('Login failed: username or password is incorrect', 'danger')
 
-
-
-# You can also have a GET route for /login_process if needed
-@app.route('/login_process', methods=['GET'])
-def login_process_get():
-    # Handle GET requests for /login_process if necessary
-    pass
+    # Redirect to the login page for GET requests and other cases
+    return redirect('/login')
 
 
 @app.route('/register', methods=['GET', 'POST'])

@@ -57,6 +57,18 @@
         </div>
       </form>
     </div>
+    <!-- Add this code in your login page HTML -->
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <ul class="flashes">
+        {% for message in messages %}
+          <li style="font-weight: bold; color: white;">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+  
+
 
     <!-- Registration Link -->
     <p class="text--center"><a  href="/register">Not a member?</a></p>
