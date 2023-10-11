@@ -66,10 +66,10 @@ def search():
         return jsonify({'error': str(e)})
 
 
-
 @app.route('/booking_process', methods=['POST'])
 def booking_process():
     try:
+        # Extract data from the form submission
         full_name = request.form['full_name']
         last_name = request.form['last_name']
         first_name = request.form['first_name']
@@ -82,51 +82,49 @@ def booking_process():
         position = request.form['position']
         examination_date = request.form['examination_date']
         exam_venue = request.form['exam_venue']
-        
-        # Check if the examinee passed the examination (you can use a checkbox or other input for this)
-        passed = request.form.get('passed', 'No')  # Default to 'No' if not checked
-        
-        # Map table labels based on the selected table
+        passed = 'Passed' if request.form.get('passed') else ''  # Set 'Passed' if checkbox is checked
+
+        # Get the selected table from the form
+        selected_table = request.form['table_selection']
+
+        # Define a table label mapping
         table_labels = {
             'examinees': 'Examinees',
             '2023_ict_diagnostic_passers': 'Dict Diag. Examinee',
             '2023_users_assessment_examinees': 'Users Assessment Examinee',
             'ict_edp_examinees': 'ICT EDP Examinee',
-            'ict_edp_passers': 'ICT EDP Passer',
+            'ict_edp_passers': 'ICT EDP Passers',
         }
-        
+
+        # Get the table label based on the selected table
+        table_label = table_labels.get(selected_table, 'Unknown')
+
+        # Open a database connection
         conn = connection()
         cur = conn.cursor()
-        
-        # Insert data into the selected table
-        selected_table = request.form['table_selection']
-        table_label = table_labels.get(selected_table, 'Unknown')  # Get the table label
-        cur.execute(f"""
-            INSERT INTO {selected_table} (full_name, last_name, first_name, middle_name, gender, 
+
+        # Define the INSERT SQL query for the selected table, using the 'table_label' as the label value
+        insert_query = f"""
+            INSERT INTO {selected_table} (label, full_name, last_name, first_name, middle_name, gender, 
             profession_or_student, course, school, company_name, position, examination_date, 
-            exam_venue, label)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """, (full_name, last_name, first_name, middle_name, gender, 
-              profession_or_student, course, school, company_name, position, 
-              examination_date, exam_venue, table_label))
-        
-        # Check if the examinee passed and insert into the corresponding passers table
-        if passed == 'Yes':
-            passers_table = f'{selected_table}_passers'
-            cur.execute(f"""
-                INSERT INTO {passers_table} (full_name, last_name, first_name, 
-                middle_name, gender, course, school, company_name, position, examination_date, 
-                exam_venue, label, status)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            """, (full_name, last_name, first_name, middle_name, gender, 
-                  course, school, company_name, position, 
-                  examination_date, exam_venue, table_label, 'Passed'))
-        
+            exam_venue, status)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """
+
+        # Execute the INSERT query with the provided data
+        cur.execute(insert_query, (table_label, full_name, last_name, first_name, middle_name, gender,
+                           profession_or_student, course, school, company_name, position,
+                           examination_date, exam_venue, passed))
+
+        # Commit the changes to the database
         conn.commit()
+
+        # Close the database connection
         conn.close()
 
+        # Provide a success message or other appropriate response
         flash('Examinee information has been recorded successfully.')
-        
+
         return redirect(url_for('examinees'))
     except Exception as e:
         # Handle exceptions, log the error, and display an error message to the user
@@ -138,13 +136,17 @@ def booking_process():
 
 
 
+
+
+
+
+
 def search_database(query):
-    conn = connection()  # Establish a database connection
+    conn = connection()
     cursor = conn.cursor()
 
     dict_database = {}
 
-    # Tables to search in
     tables_to_search = [
         '2023_ict_diagnostic_passers',
         '2023_users_assessment_examinees',
@@ -154,25 +156,33 @@ def search_database(query):
     ]
 
     for table in tables_to_search:
-        # Check if the table has a 'status' column
         cursor.execute(f"SHOW COLUMNS FROM {table} LIKE 'status'")
         status_column_exists = cursor.fetchone()
 
+        # Store the column names in a list
+        column_names = []
+
+        # Store the rows in a list of dictionaries
+        rows = []
+
         if status_column_exists:
-            # If the 'status' column exists, perform the search on multiple columns
             cursor.execute(f"SELECT * FROM {table} WHERE status LIKE %s OR full_name LIKE %s OR school LIKE %s OR exam_venue LIKE %s OR profession_or_student LIKE %s OR course LIKE %s OR company_name LIKE %s OR position LIKE %s OR examination_date LIKE %s",
                            ('%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%'))
-            results = cursor.fetchall()
-            dict_database[table] = results
         else:
-            # If the 'status' column doesn't exist, check for other fields like names, schools, and exam venues
             cursor.execute(f"SELECT * FROM {table} WHERE full_name LIKE %s OR school LIKE %s OR exam_venue LIKE %s OR profession_or_student LIKE %s OR course LIKE %s OR company_name LIKE %s OR position LIKE %s OR examination_date LIKE %s",
                            ('%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%'))
-            results = cursor.fetchall()
-            dict_database[table] = results
+
+        # Get the column names
+        column_names = [column[0] for column in cursor.description]
+
+        # Get the rows as dictionaries
+        rows = [dict(zip(column_names, row)) for row in cursor.fetchall()]
+
+        dict_database[table] = {'columns': column_names, 'data': rows}
 
     conn.close()
     return dict_database
+
 
 @app.route('/examinees', methods=['GET', 'POST'])
 def examinees():
