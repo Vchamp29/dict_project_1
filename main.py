@@ -59,31 +59,30 @@ def logout():
 @app.route('/update-record', methods=['GET'])
 def update_record_form():
     table_name = request.args.get('__tableName')  # Extract the table name
-    # You can retrieve other parameters for pre-filling here
+    record_id = request.args.get('id')  # Extract the record ID
 
-    return render_template('update_form.html', table_name=table_name)
+    # Initialize the record data as an empty dictionary
+    record_data = {}
 
-@app.route('/update-record', methods=['POST'])
-def update_record():
-    conn = connection()
-    cursor = conn.cursor()
-
+    # Fetch the data for the specified record from your data source
     try:
-        # Retrieve the updated data from the form
-        updated_data = request.form
+        conn = connection()  # Establish a connection to your database
+        cursor = conn.cursor()
 
-        # Construct the SQL query to update the record
-        update_query = f"UPDATE {updated_data['__tableName']} SET column1=%s, column2=%s, ... WHERE id=%s"
-        cursor.execute(update_query, (*updated_data.values(), id))  # Adjust column names as needed
-
-        conn.commit()
-        return jsonify({'message': 'Record updated successfully'})
+        query = f"SELECT * FROM {table_name} WHERE id = %s"
+        cursor.execute(query, (record_id,))
+        record_data = cursor.fetchone()
     except Exception as e:
-        conn.rollback()
-        return jsonify({'error': f'Error during update: {str(e)}'}), 500
+        # Handle the error, e.g., return an error response
+        return jsonify({'error': f'Error fetching record data: {str(e)}'}), 500
     finally:
         cursor.close()
         conn.close()
+
+    # Pass the record data to the template for pre-filling the form
+    return render_template('update_form.html', table_name=table_name, record_id=record_id, record_data=record_data)
+
+
 
 # Route for deleting a record
 @app.route('/delete/<string:table_name>/<int:id>', methods=['DELETE'])
@@ -419,6 +418,7 @@ def update_process_two():
     conn.commit()
     return redirect(url_for('display'))
 
+
 # Examinee Update One
 @app.route('/examinee_update_one/<string:id>/')
 def examinee_update_one(id):
@@ -427,10 +427,12 @@ def examinee_update_one(id):
     cur.execute("SELECT * FROM examinees WHERE id = %s", (id,))
     data = cur.fetchone()
     conn.close()
-    return render_template('edit_examinee.html', data=data)
+
+    # Pass the table name along with the data to the edit_examinee.html template
+    return render_template('edit_examinee.html', data=data, table_name='examinees')
 
 
-# Updated examinee_update handle
+
 @app.route('/examinee_update_two', methods=['POST'])
 def examinee_update_two():
     try:
@@ -447,42 +449,49 @@ def examinee_update_two():
         position = request.form['position']
         examination_date = request.form['examination_date']
         exam_venue = request.form['exam_venue']
-        
-        # Check if the selected label corresponds to a 'passers' table
+
+        # Extract "passed" value (default to 'No' if not checked)
+        passed = request.form.get('passed', 'No')
+
+        # Extract selected_table from the form
         selected_table = request.form['table_selection']
-        passers_tables = ['ict_edp_passers', '2023_ict_diagnostic_passers']  # Add your additional 'passers' tables here
-        
+
+        # Define a table label mapping
+        table_labels = {
+            'examinees': 'Examinees',
+            '2023_ict_diagnostic_passers': 'Dict Diag. Examinee',
+            '2023_users_assessment_examinees': 'Users Assessment Examinee',
+            'ict_edp_examinees': 'ICT EDP Examinee',
+            'ict_edp_passers': 'ICT EDP Passers',
+        }
+
+        # Get the table label based on the selected table
+        table_label = table_labels.get(selected_table, 'Unknown')
+
         conn = connection()
         cur = conn.cursor()
-        
-        cur.execute("""
-            UPDATE examinees 
-            SET full_name = %s, last_name = %s, first_name = %s, middle_name = %s, gender = %s, 
-                profession_or_student = %s, course = %s, school = %s, company_name = %s, position = %s, 
-                examination_date = %s, exam_venue = %s
+
+        # Define the UPDATE SQL query for the selected table
+        update_query = f"""
+            UPDATE {selected_table}
+            SET label = %s, full_name = %s, last_name = %s, first_name = %s, middle_name = %s, gender = %s,
+                profession_or_student = %s, course = %s, school = %s, company_name = %s, position = %s,
+                examination_date = %s, exam_venue = %s, status = %s
             WHERE id = %s
-        """, (full_name, last_name, first_name, middle_name, gender, profession_or_student, course,
-              school, company_name, position, examination_date, exam_venue, examinee_id))
-        
-        if selected_table in passers_tables:
-            # Check if the examinee passed and update the status in 'passers' table
-            passed = request.form.get('passed', 'No')  # Default to 'No' if not checked
-            if passed == 'Yes':
-                cur.execute(f"""
-                    UPDATE {selected_table}
-                    SET status = 'Passed'
-                    WHERE id = %s
-                """, (examinee_id,))
-        
+        """
+
+        cur.execute(update_query, ( examinee_id, table_label, full_name, last_name, first_name, middle_name, gender,
+                                   profession_or_student, course, school, company_name, position,
+                                   examination_date, exam_venue, 'Passed'))
+
         conn.commit()
         conn.close()
 
         flash('Examinee information has been updated successfully.')
-        
+
         return redirect(url_for('examinees'))
     except Exception as e:
-        # Handle exceptions, log the error, and display an error message to the user
-        print(str(e))  # Print the error message for debugging
+        print(str(e))
         flash('An error occurred while updating examinee information. Please try again.')
         return redirect(url_for('examinees'))
 

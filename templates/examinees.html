@@ -189,37 +189,14 @@
             }
     
             function handleUpdate(row) {
-                // Get the table row to update
-                const rowToUpdate = document.querySelector(`tr[data-id="${row.id}}`);
-    
-                // Convert the columns to editable content
-                const columns = ['full_name', 'last_name', 'first_name', 'middle_name', 'gender', 'profession_or_student', 'course', 'school', 'company_name', 'position', 'examination_date', 'exam_venue', 'status'];
-    
-                columns.forEach((column) => {
-                    const cell = rowToUpdate.querySelector(`td[data-column="${column}`);
-    
-                    // Create an input element for editing
-                    const input = document.createElement('input');
-                    input.value = row[column];
-    
-                    // Replace the cell's content with the input field
-                    cell.innerHTML = '';
-                    cell.appendChild(input);
-                });
-    
-                // Create a "Save" button for the user to save changes
-                const saveButton = document.createElement('button');
-                saveButton.textContent = 'Save';
-                saveButton.addEventListener('click', () => {
-                    saveChanges(row, rowToUpdate);
-                });
-    
-                // Replace the "Update" button with the "Save" button
-                const buttonGroup = createUpdateDeleteButtons(row);
-                buttonGroup.removeChild(buttonGroup.querySelector('button')); // Remove the "Update" button
-                buttonGroup.appendChild(saveButton); // Add the "Save" button
-                rowToUpdate.querySelector('td[data-column="status"]').appendChild(buttonGroup);
+                const tableName = row['__tableName'];
+                const recordId = row['id'];
+
+                // Redirect to the examinee_update_one route with table name and record ID as parameters
+                window.location.href = `/examinee_update_one/${recordId}`;
             }
+
+
     
             function saveChanges(row, rowToUpdate) {
                 const tableName = row['__tableName']; // Extract the table name from the data
