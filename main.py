@@ -56,14 +56,53 @@ def logout():
 
 
 
-@app.route('/search', methods=['POST'])
-def search():
+@app.route('/update-record', methods=['GET'])
+def update_record_form():
+    table_name = request.args.get('__tableName')  # Extract the table name
+    # You can retrieve other parameters for pre-filling here
+
+    return render_template('update_form.html', table_name=table_name)
+
+@app.route('/update-record', methods=['POST'])
+def update_record():
+    conn = connection()
+    cursor = conn.cursor()
+
     try:
-        search_query = request.form.get('query')
-        result = search_database(search_query)
-        return jsonify(result)
+        # Retrieve the updated data from the form
+        updated_data = request.form
+
+        # Construct the SQL query to update the record
+        update_query = f"UPDATE {updated_data['__tableName']} SET column1=%s, column2=%s, ... WHERE id=%s"
+        cursor.execute(update_query, (*updated_data.values(), id))  # Adjust column names as needed
+
+        conn.commit()
+        return jsonify({'message': 'Record updated successfully'})
     except Exception as e:
-        return jsonify({'error': str(e)})
+        conn.rollback()
+        return jsonify({'error': f'Error during update: {str(e)}'}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
+# Route for deleting a record
+@app.route('/delete/<string:table_name>/<int:id>', methods=['DELETE'])
+def delete_record(table_name, id):
+    conn = connection()
+    cursor = conn.cursor()
+
+    try:
+        # Assuming your table has a primary key 'id'
+        delete_query = f"DELETE FROM {table_name} WHERE id=%s"
+        cursor.execute(delete_query, (id,))
+        conn.commit()
+        return '', 204  # Respond with a status code (204 No Content) and an empty response
+    except Exception as e:
+        conn.rollback()
+        return jsonify({'error': f'Error during delete: {str(e)}'}), 500
+    finally:
+        cursor.close()
+        conn.close()
 
 
 @app.route('/booking_process', methods=['POST'])
@@ -137,8 +176,14 @@ def booking_process():
 
 
 
-
-
+@app.route('/search', methods=['POST'])
+def search():
+    try:
+        search_query = request.form.get('query')
+        result = search_database(search_query)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)})
 
 
 def search_database(query):

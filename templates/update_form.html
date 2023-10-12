@@ -1,0 +1,55 @@
+<!-- update_form.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Record</title>
+</head>
+<body>
+    <h1>Update Record</h1>
+    <form id="update-form">
+        <input type="hidden" name="__tableName" value="examinees"> <!-- A hidden field to store the table name -->
+        <label for="label">Label</label>
+        <input type="text" name="label"  value="{{ request.args.label }}" required>
+
+        <label for="full_name">Full Name</label>
+        <input type="text" name="full_name"  value="{{ request.args.full_name }}" required>
+        
+        <label for="last_name">Last Name</label>
+        <input type="text" name="last_name"  value="{{ request.args.last_name }}" required>
+
+        <label for="first_name">First Name</label>
+        <input type="text" name="first_name"  value="{{ request.args.first_name }}" required>
+
+        <label for="middle_name">Middle Name</label>
+        <input type="text" name="middle_name"  value="{{ request.args.middle_name }}" required>
+
+        <label for="gender">gender</label>
+        <input type="text" name="gender"  value="{{ request.args.gender }}" required>
+
+        <label for="profession_or_student">Profession/Student</label>
+        <input type="text" name="profession_or_student" value="{{ request.args.profession_or_student }}" required>
+
+        <label for="course">school</label>
+        <input type="text" name="school" value="{{ request.args. }}" required>
+
+        <label for="course">Company Name</label>
+        <input type="text" name="company_name" value="{{ request.args.company_name }}" required>
+
+        <label for="course">Position</label>
+        <input type="text" name="position" value="{{ request.args.position }}" required>
+
+        <label for="course">Exam Date</label>
+        <input type="text" name="examination_date" value="{{ request.args.examination_date }}" required>
+
+        <label for="course">Exam Venue</labelschool
+        <input type="text" name="exam_venue" value="{{ request.args.exam_venue }}" required>
+
+        <label for="course">Status</label>
+        <input type="text" name="status" value="{{ request.args.status }}" required>
+        
+        <button type="submit">Update</button>
+    </form>
+</body>
+</html>
