@@ -419,18 +419,24 @@ def update_process_two():
     return redirect(url_for('display'))
 
 
-# Examinee Update One
-@app.route('/examinee_update_one/<string:id>/')
-def examinee_update_one(id):
+
+
+
+
+# Import necessary modules
+
+@app.route('/examinee_update_one/<string:tableName>/<string:id>/', methods=['GET', 'POST'])
+def examinee_update_one(tableName, id):
+    print(f"Received tableName: {tableName}, id: {id}")
     conn = connection()
     cur = conn.cursor()
-    cur.execute("SELECT * FROM examinees WHERE id = %s", (id,))
+    # Dynamically construct the SQL query based on the tableName
+    cur.execute(f"SELECT * FROM {tableName} WHERE id = %s", (id,))
     data = cur.fetchone()
     conn.close()
 
-    # Pass the table name along with the data to the edit_examinee.html template
-    return render_template('edit_examinee.html', data=data, table_name='examinees')
-
+    # Pass the tableName to the edit_examinee.html template
+    return render_template('edit_examinee.html', data=data, table_selection=tableName)
 
 
 @app.route('/examinee_update_two', methods=['POST'])
@@ -453,36 +459,34 @@ def examinee_update_two():
         # Extract "passed" value (default to 'No' if not checked)
         passed = request.form.get('passed', 'No')
 
-        # Extract selected_table from the form
-        selected_table = request.form['table_selection']
-
-        # Define a table label mapping
-        table_labels = {
-            'examinees': 'Examinees',
-            '2023_ict_diagnostic_passers': 'Dict Diag. Examinee',
-            '2023_users_assessment_examinees': 'Users Assessment Examinee',
-            'ict_edp_examinees': 'ICT EDP Examinee',
-            'ict_edp_passers': 'ICT EDP Passers',
-        }
-
-        # Get the table label based on the selected table
-        table_label = table_labels.get(selected_table, 'Unknown')
-
         conn = connection()
         cur = conn.cursor()
 
-        # Define the UPDATE SQL query for the selected table
-        update_query = f"""
-            UPDATE {selected_table}
-            SET label = %s, full_name = %s, last_name = %s, first_name = %s, middle_name = %s, gender = %s,
-                profession_or_student = %s, course = %s, school = %s, company_name = %s, position = %s,
-                examination_date = %s, exam_venue = %s, status = %s
-            WHERE id = %s
-        """
+        # Determine the selected table
+        selected_table = request.form['table_selection']
 
-        cur.execute(update_query, ( examinee_id, table_label, full_name, last_name, first_name, middle_name, gender,
+        # Define the UPDATE SQL query for the selected table
+        update_query = """
+            UPDATE {}
+            SET full_name = %s, last_name = %s, first_name = %s, middle_name = %s, gender = %s,
+                profession_or_student = %s, course = %s, school = %s, company_name = %s, position = %s,
+                examination_date = %s, exam_venue = %s
+            WHERE id = %s
+        """.format(selected_table)
+
+        # Execute the UPDATE query
+        cur.execute(update_query, (full_name, last_name, first_name, middle_name, gender,
                                    profession_or_student, course, school, company_name, position,
-                                   examination_date, exam_venue, 'Passed'))
+                                   examination_date, exam_venue, examinee_id))
+
+        if selected_table in ['ict_edp_passers', '2023_ict_diagnostic_passers']:
+            # Check if the examinee passed and update the status in the 'passers' table
+            if passed == 'Yes':
+                cur.execute("""
+                    UPDATE {}
+                    SET status = 'Passed'
+                    WHERE id = %s
+                """.format(selected_table), (examinee_id,))
 
         conn.commit()
         conn.close()
@@ -494,6 +498,7 @@ def examinee_update_two():
         print(str(e))
         flash('An error occurred while updating examinee information. Please try again.')
         return redirect(url_for('examinees'))
+
 
 
 

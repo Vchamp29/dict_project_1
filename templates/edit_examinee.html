@@ -92,89 +92,71 @@
     </nav>
 
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <h1 class="text-center mb-4">
-                    <p class="examinee-information">Edit Examinee Information</p>
-                </h1>
-                <form action="/examinee_update_two" method="POST">
-                    <input type="hidden" name="id" value="{{ data[0] }}">
-                    <!-- Include fields for editing examinee information -->
-                    <div class="form-group">
-                        <label for="table_selection">
-                            <a class="select-table">Select Table</a>
-                        </label>
-                        <select class="form-control" id="table_selection" name="table_selection" required>
-                            <option value="examinees">2023 DICT ICT Diagnostic Examinees</option>
-                            <option value="2023_users_assessment_examinees">2023 Users Assessment Examinees</option>
-                            <option value="ict_edp_examinees">ICT EDP Examinees</option>
-                            <option value="ict_edp_passers">ICT EDP Passers</option>
-                            <option value="2023_ict_diagnostic_passers">2023 ICT Diagnostic Passers</option>
-
-                        </select>
-                    </div>     
-                    <div class="form-group">
-                        <label for="full_name">Full Name</label>
-                        <input type="text" class="form-control" id="full_name" name="full_name" value="{{ data[3] }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="last_name">Last Name</label>
-                        <input type="text" class="form-control" id="last_name" name="last_name" value="{{ data[4] }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="first_name">First Name</label>
-                        <input type="text" class="form-control" id="first_name" name="first_name" value="{{ data[5] }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="middle_name">Middle Name</label>
-                        <input type="text" class="form-control" id="middle_name" name="middle_name" value="{{ data[6] }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="gender">Gender</label>
-                        <select class="form-control" id="gender" name="gender">
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="profession_or_student">Professional/Student</label>
-                        <select class="form-control" id="profession_or_student" name="profession_or_student">
-                            <option value="Professional">Professional</option>
-                            <option value="Student">Student</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="course">Course</label>
-                        <input type="text" class="form-control" id="course" name="course" value="{{ data[9] }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="school">School</label>
-                        <input type="text" class="form-control" id="school" name="school" value="{{ data[10] }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="company_name">Company Name</label>
-                        <input type="text" class="form-control" id="company_name" name="company_name" value="{{ data[11] }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="position">Position</label>
-                        <input type="text" class="form-control" id="position" name="position" value="{{ data[12] }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="examination_date">Examination Date</label>
-                        <input type="text" class="form-control" id="examination_date" name="examination_date" value="{{ data[13] }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="exam_venue">Exam Venue</label>
-                        <input type="text" class="form-control" id="exam_venue" name="exam_venue" value="{{ data[14] }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="mark_passed">Mark as Passed:</label>
-                        <input type="checkbox" class="" id="mark_passed" name="passed" value="Yes">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Update</button>
-                </form>
+        <form action="/examinee_update_two" method="POST">
+            <input type="hidden" name="id" value="{{ data[0] }}">
+            <div class="form-group">
+                <label for="full_name">Full Name</label>
+                <input type="text" class="form-control" id="full_name" name="full_name" value="{{ data[2] }}">
             </div>
-        </div>
+            <div class="form-group">
+                <label for="last_name">Last Name</label>
+                <input type="text" class="form-control" id="last_name" name="last_name" value="{{ data[3] }}">
+            </div>
+            <div class="form-group">
+                <label for="first_name">First Name</label>
+                <input type="text" class="form-control" id="first_name" name="first_name" value="{{ data[4] }}">
+            </div>
+            <div class="form-group">
+                <label for="middle_name">Middle Name</label>
+                <input type="text" class="form-control" id="middle_name" name="middle_name" value="{{ data[5] }}">
+            </div>
+            <div class="form-group">
+                <label for="gender">Gender</label>
+                <select class="form-control" id="gender" name="gender">
+                    <option value="Male" {% if data[6] == 'Male' %} selected {% endif %}>Male</option>
+                    <option value="Female" {% if data[6] == 'Female' %} selected {% endif %}>Female</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="profession_or_student">Professional/Student</label>
+                <select class="form-control" id="profession_or_student" name="profession_or_student">
+                    <option value="Professional" {% if data[7] == 'Professional' %} selected {% endif %}>Professional</option>
+                    <option value="Student" {% if data[7] == 'Student' %} selected {% endif %}>Student</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="course">Course</label>
+                <input type="text" class="form-control" id="course" name="course" value="{{ data[8] }}">
+            </div>
+            <div class="form-group">
+                <label for="school">School</label>
+                <input type="text" class="form-control" id="school" name="school" value="{{ data[9] }}">
+            </div>
+            <div class="form-group">
+                <label for="company_name">Company Name</label>
+                <input type="text" class="form-control" id="company_name" name="company_name" value="{{ data[10] }}">
+            </div>
+            <div class="form-group">
+                <label for="position">Position</label>
+                <input type="text" class="form-control" id="position" name="position" value="{{ data[11] }}">
+            </div>
+            <div class="form-group">
+                <label for="examination_date">Examination Date</label>
+                <input type="text" class="form-control" id="examination_date" name="examination_date" value="{{ data[12] }}">
+            </div>
+            <div class="form-group">
+                <label for="exam_venue">Exam Venue</label>
+                <input type="text" class="form-control" id="exam_venue" name="exam_venue" value="{{ data[13] }}">
+            </div>
+            <div class="form-group">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="mark_passed" name="passed" value="Yes" {% if data[14] == 'Passed' %} checked {% endif %}>
+                    <label class="form-check-label" for="mark_passed">Mark as Passed</label>
+                </div>
+            </div>
+            <input type="hidden" name="table_selection" value="{{ table_selection }}">
+            <button type="submit" class="btn btn-primary">Update</button>
+        </form>
     </div>
 
     <!-- Include Bootstrap JS -->

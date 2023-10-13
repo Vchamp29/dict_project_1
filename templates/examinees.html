@@ -93,55 +93,6 @@
     
     <div id="results" class="container">
     </div>
-    
-    <form id="update-form" style="display: none;">
-        <input type="hidden" name="__tableName" value="examinees"> <!-- A hidden field to store the table name -->
-        <label for="label">Label</label>
-        <input type="text" name="label" required>
-
-        <label for="full_name">Full Name</label>
-        <input type="text" name="full_name" required>
-        
-        <label for="last_name">Last Name</label>
-        <input type="text" name="last_name" required>
-        
-        <label for="first_name">First Name</label>
-        <input type="text" name="first_name" required>
-        
-        <label for="middle_name">Middle Name</label>
-        <input type="text" name="middle_name" required>
-        
-        <label for="gender">Gender</label>
-        <input type="text" name="gender" required>
-        
-        <label for="profession_or_student">Profession or Student</label>
-        <input type="text" name="profession_or_student" required>
-        
-        <label for="course">Course</label>
-        <input type="text" name="course" required>
-        
-        <label for="school">School</label>
-        <input type="text" name="school" required>
-        
-        <label for="company_name">Company Name</label>
-        <input type="text" name="company_name" required>
-        
-        <label for="position">Position</label>
-        <input type="text" name="position" required>
-        
-        <label for="examination_date">Examination Date</label>
-        <input type="text" name="examination_date" required>
-        
-        <label for="exam_venue">Exam Venue</label>
-        <input type="text" name="exam_venue" required>
-        
-        <label for="status">Status</label>
-        <input type="text" name="status" required>
-        
-        <button type="submit">Update</button>
-    </form>
-
-<!-- Place this code inside your HTML file, typically within <script> tags -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const form = document.getElementById('search-form');
@@ -189,12 +140,12 @@
             }
     
             function handleUpdate(row) {
+                // Redirect to the examinee_update_one route with table name and record ID as parameters
                 const tableName = row['__tableName'];
                 const recordId = row['id'];
-
-                // Redirect to the examinee_update_one route with table name and record ID as parameters
-                window.location.href = `/examinee_update_one/${recordId}`;
+                window.location.href = `/examinee_update_one/${tableName}/${recordId}`;
             }
+
 
 
     
