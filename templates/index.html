@@ -5,6 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Home</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  	<!-- CSS
+    ================================================== -->
+    <link rel="stylesheet" href="static/css/default.css">
+	<link rel="stylesheet" href="static/css/layout.css">
+   <link rel="stylesheet" href="static/css/media-queries.css">
+   <link rel="stylesheet" href="static/css/magnific-popup.css">
+
+   <!-- Script
+   ================================================== -->
+	<script src="js/modernizr.js"></script>
+
+   <!-- Favicons
+	================================================== -->
+	<link rel="shortcut icon" href="favicon.png" >
+    <link rel="shortcut-icon" href="static/img/dict-logo.png">
   <style>
     body {
         background-image: url('C:/Users/user/Desktop/DICT/dict_crud_automation/static/img/dict-logo.png');
@@ -39,11 +54,6 @@
         font-size: 18px;
     }
 
-    /* Container Styling */
-    .container {
-        margin-top: 20px;
-        padding: 0; /* Remove default padding to align content properly */
-    }
 
     /* Jumbotron Styling */
     .jumbotron {
@@ -127,67 +137,74 @@
     .navbar-nav .username {
         margin-left: auto;
     }
+
+    .container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* Two columns */
+        gap: 10px; /* Gap between the columns */
+    }
+
     
   </style>
 
 </head>
 <body>
-
-
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <a class="navbar-brand" href="/">DICT Caraga</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="/">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/booking">Insert Process</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/examinees">Examinees</a>
-                </li>
-            </ul>
-            <ul class="navbar-nav ml-auto">
-                {% if session.username %}
-                <!-- Dropdown menu for logged-in user -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
-                       aria-haspopup="true" aria-expanded="false">
-                        Welcome, {{ session.username }}
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="userDropdown">
-                        <a class="dropdown-item" href="#">Profile</a>
-                        <a class="dropdown-item" href="/logout">Logout</a>
-                    </div>
-                </li>
-                {% else %}
-                <!-- Login link for guests -->
-                <li class="nav-item">
-                    <a class="nav-link" href="/login">Login</a>
-                </li>
-                {% endif %}
-            </ul>
-        </div>
-    </nav>
     
 
+<header id="home">
 
-<div class="container">
-  <div class="jumbotron">
-    <div class="jumbotron-content">
-        <img src="static/img/dict-logo.png" alt="DICT Logo" class="jumbotron-logo">
-        <div class="jumbotron-text">
-          <h2>Welcome to DICT</h2>
-          <p>Web-based system for managing examinee records and user accounts.</p>
+    <nav id="nav-wrap">
+        <ul id="nav" class="nav">
+            <li><a href="/">Home</a></li>
+            <li><a href="/booking">Insert Process</a></li>
+            <li><a href="/examinees">Examinees</a></li>
+            {% if session.username %}
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Welcome, {{ session.username }}
+                </a>
+                <div class="dropdown-menu" aria-labelledby="userDropdown">
+                    <a class="dropdown-item" href="#">Profile</a>
+                    <a class="dropdown-item" href="/logout">Logout</a>
+                </div>
+            </li>
+            {% else %}
+            <li><a href="/login">Login</a></li>
+            {% endif %}
+        </ul> <!-- end #nav -->
+    </nav> <!-- end #nav-wrap -->
+    
+
+    <div class="row banner">
+        <div class="banner-text">
+            <h1 class="responsive-headline">DICT</h1>
+            <h3>This is a  <span>web based</span>, <span>crud</span> automation <span>system</span> that automates examinee data. <a class="smoothscroll" href="#about"></a>
+            <a class="smoothscroll" href="/examinees">start now</a>.</h3>
+            <hr />
         </div>
+        <div>
+            <h4>Powered by:</h4>
+        </div>
+        <div class="container d-flex justify-content-center align-items-center">
+            <div class="row">
+                <div class="col-md-6">
+                    <img src="static/img/ilcdb_logo.png" alt="ILCDB Logo" style="max-width: 50%;">
+                </div>
+                <div class="col-md-6">
+                    <img src="static/img/dict-logo.png" alt="DICT Logo" style="max-width: 50%; /* Adjust the percentage as needed */ margin-top: -70px;">
+                </div>
+            </div>
+        </div>
+        
+        
+        
+        
+
     </div>
-  </div>
-</div>
+
+
+
+</header> <!-- Header End -->
 
 <div class="container">
     <div class="row custom-color">

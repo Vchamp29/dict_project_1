@@ -56,31 +56,31 @@ def logout():
 
 
 
-@app.route('/update-record', methods=['GET'])
-def update_record_form():
-    table_name = request.args.get('__tableName')  # Extract the table name
-    record_id = request.args.get('id')  # Extract the record ID
+# @app.route('/update-record', methods=['GET'])
+# def update_record_form():
+#     table_name = request.args.get('__tableName')  # Extract the table name
+#     record_id = request.args.get('id')  # Extract the record ID
 
-    # Initialize the record data as an empty dictionary
-    record_data = {}
+#     # Initialize the record data as an empty dictionary
+#     record_data = {}
 
-    # Fetch the data for the specified record from your data source
-    try:
-        conn = connection()  # Establish a connection to your database
-        cursor = conn.cursor()
+#     # Fetch the data for the specified record from your data source
+#     try:
+#         conn = connection()  # Establish a connection to your database
+#         cursor = conn.cursor()
 
-        query = f"SELECT * FROM {table_name} WHERE id = %s"
-        cursor.execute(query, (record_id,))
-        record_data = cursor.fetchone()
-    except Exception as e:
-        # Handle the error, e.g., return an error response
-        return jsonify({'error': f'Error fetching record data: {str(e)}'}), 500
-    finally:
-        cursor.close()
-        conn.close()
+#         query = f"SELECT * FROM {table_name} WHERE id = %s"
+#         cursor.execute(query, (record_id,))
+#         record_data = cursor.fetchone()
+#     except Exception as e:
+#         # Handle the error, e.g., return an error response
+#         return jsonify({'error': f'Error fetching record data: {str(e)}'}), 500
+#     finally:
+#         cursor.close()
+#         conn.close()
 
-    # Pass the record data to the template for pre-filling the form
-    return render_template('update_form.html', table_name=table_name, record_id=record_id, record_data=record_data)
+#     # Pass the record data to the template for pre-filling the form
+#     return render_template('update_form.html', table_name=table_name, record_id=record_id, record_data=record_data)
 
 
 
