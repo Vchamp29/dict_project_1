@@ -1,266 +1,76 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Home</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-  	<!-- CSS
-    ================================================== -->
-    <link rel="stylesheet" href="static/css/default.css">
-	<link rel="stylesheet" href="static/css/layout.css">
-   <link rel="stylesheet" href="static/css/media-queries.css">
-   <link rel="stylesheet" href="static/css/magnific-popup.css">
-
-   <!-- Script
-   ================================================== -->
-	<script src="js/modernizr.js"></script>
-
-   <!-- Favicons
-	================================================== -->
-	<link rel="shortcut icon" href="favicon.png" >
-    <link rel="shortcut-icon" href="static/img/dict-logo.png">
-  <style>
-    body {
-        background-image: url('C:/Users/user/Desktop/DICT/dict_crud_automation/static/img/dict-logo.png');
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-        color: white;
-        font-family: Arial, sans-serif;
-        margin: 0; /* Remove default margin to align content properly */
-        padding: 0; /* Remove default padding to align content properly */
-    }
-
-    /* Navbar Styling */
-    .navbar {
-        background-color: rgba(0, 0, 0, 0.7);
-    }
-
-    .navbar-brand {
-        font-size: 24px;
-    }
-
-    .navbar-toggler-icon {
-        background-color: white;
-    }
-
-    .nav-item {
-        margin-right: 20px;
-    }
-
-    .nav-link {
-        color: white;
-        font-size: 18px;
-    }
-
-
-    /* Jumbotron Styling */
-    .jumbotron {
-        background-color: rgba(139, 132, 132, 0.7);
-        color: white;
-        margin-bottom: 0; /* Remove margin to align with the next section */
-        position: relative; /* Set position to relative for positioning the logo */
-    }
-
-    /* CSS for jumbotron content */
-    .jumbotron-content {
-        padding: 20px; /* Add padding to jumbotron content */
-    }
-
-    /* Background image for jumbotron */
-    .jumbotron::before {
-        content: "";
-        background-image: url('C:/Users/user/Desktop/DICT/dict_crud_automation/static/img/dict-logo.png');
-        background-size: contain; /* Adjust the background size as needed */
-        background-repeat: no-repeat;
-        background-position: right center; /* Position the logo on the right center */
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        right: 0;
-        left: 0;
-        opacity: 0.2; /* Adjust the opacity of the logo */
-        z-index: -1; /* Send the background image to the back */
-    }
-
-    /* CSS for jumbotron logo */
-    .jumbotron-logo {
-        width: auto; /* Allow the logo to adjust its width */
-        max-height: 200px; /* Set the maximum height for the logo */
-        float: right; /* Float the logo to the right */
-        margin-left: 20px; /* Add some margin to the left of the logo for spacing */
-    }
-
-    /* CSS for jumbotron text content */
-    .jumbotron-text {
-        width: calc(100% - 250px); /* Calculate the width to accommodate the logo */
-        color: rgb(0, 0, 0);
-        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    }
-
-    /* Custom Color Row Styling */
-    .row.custom-color {
-        background-color: rgba(0, 0, 0, 0.5);
-        padding: 30px;
-        border-radius: 10px;
-        margin-top: 20px;
-    }
-
-    /* About Chefs Section Styling */
-    .about-chefs {
-        background-color: rgba(0, 0, 0, 0.5);
-        padding: 30px; /* Add padding to separate this section from the container background */
-        border-radius: 10px;
-        margin-top: 20px;
-    }
-
-    /* Chef and Restaurant Image Styling */
-    .chef-image img, .restaurant-image img {
-        width: 100%;
-        height: auto;
-        object-fit: cover;
-    }
-
-    /* Login Styling */
-    .login {
-        display: flex;
-        justify-content: flex-end;
-    }
-
-    /* Navbar Navigation Styling */
-    .navbar-nav {
-        display: flex;
-        align-items: center;
-    }
-
-    .navbar-nav .username {
-        margin-left: auto;
-    }
-
-    .container {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr); /* Two columns */
-        gap: 10px; /* Gap between the columns */
-    }
-
-    
-  </style>
-
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Home</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        /* Custom CSS for hoverable dropdown menu */
+        .nav-item:hover .dropdown-menu {
+            display: block;
+        }
+    </style>
 </head>
 <body>
-    
 
 <header id="home">
-
-    <nav id="nav-wrap">
-        <ul id="nav" class="nav">
-            <li><a href="/">Home</a></li>
-            <li><a href="/booking">Insert Process</a></li>
-            <li><a href="/examinees">Examinees</a></li>
-            {% if session.username %}
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Welcome, {{ session.username }}
-                </a>
-                <div class="dropdown-menu" aria-labelledby="userDropdown">
-                    <a class="dropdown-item" href="#">Profile</a>
-                    <a class="dropdown-item" href="/logout">Logout</a>
-                </div>
-            </li>
-            {% else %}
-            <li><a href="/login">Login</a></li>
-            {% endif %}
-        </ul> <!-- end #nav -->
-    </nav> <!-- end #nav-wrap -->
-    
-
-    <div class="row banner">
-        <div class="banner-text">
-            <h1 class="responsive-headline">DICT</h1>
-            <h3>This is a  <span>web based</span>, <span>crud</span> automation <span>system</span> that automates examinee data. <a class="smoothscroll" href="#about"></a>
-            <a class="smoothscroll" href="/examinees">start now</a>.</h3>
-            <hr />
+    <!-- Bootstrap Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="/">Home</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/booking">Insert Process</a>
+                </li>
+                <!-- Hoverable dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="examineesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Examinees
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="examineesDropdown">
+                        <a class="dropdown-item" href="/examinees?type=2023_ict_diagnostic_passers">ICT Diagnostic Examinees</a>
+                        <a class="dropdown-item" href="/examinees?type=2023_users_assessment_examinees">Users Assessment Examinees</a>
+                        <a class="dropdown-item" href="/examinees?type=ict_edp_examinees">ICT EDP Examinees</a>                        
+                    </div>
+                </li>                
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                {% if session.username %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Welcome, {{ session.username }}
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="userDropdown">
+                        <a class="dropdown-item" href="#">Profile</a>
+                        <a class="dropdown-item" href="/logout">Logout</a>
+                    </div>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/login">Login</a>
+                </li>
+                {% endif %}
+            </ul>
         </div>
-        <div>
-            <h4>Powered by:</h4>
-        </div>
-        <div class="container d-flex justify-content-center align-items-center">
-            <div class="row">
-                <div class="col-md-6">
-                    <img src="static/img/ilcdb_logo.png" alt="ILCDB Logo" style="max-width: 50%;">
-                </div>
-                <div class="col-md-6">
-                    <img src="static/img/dict-logo.png" alt="DICT Logo" style="max-width: 50%; /* Adjust the percentage as needed */ margin-top: -70px;">
-                </div>
-            </div>
-        </div>
-        
-        
-        
-        
+    </nav>
 
-    </div>
-
-
-
-</header> <!-- Header End -->
-
-<div class="container">
-    <div class="row custom-color">
-        <div class="col-md-6">
-            <div class="about-restaurant">
-                <h2>Database Operations:</h2>
-                <p>
-                    The application connects to the MySQL database to perform various operations such as user registration, user login, displaying users, updating users, and managing examinee records.
-                </p>
-                <h2>HTML Templates:</h2>
-                <p>
-                    The application renders HTML templates for different routes to provide a user interface. These templates are responsible for displaying data and forms.
-                </p>
-                <h2>Session Management:</h2>
-                <p>
-                    Session Management: The application uses the session to manage user authentication. Users are required to log in before accessing certain routes.
-                </p>
-                <h2>Error Handling:</h2>
-                <p>
-                    The application handles exceptions and displays flash messages to inform users about the success or failure of operations.
-                </p>
-                <h2>Running the Application:</h2>
-                <p>
-                    The application runs in debug mode if the script is executed directly.
-                </p>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="about-chef">
-                <h2>Routes:</h2>
-                <p>
-                    The application defines various routes for different functionalities: <br>
-                    /: The home route, which is protected by the login_required decorator, displays the main page. <br>
-                    /booking: Displays a booking page (which seems to be related to booking examinations). <br>
-                    /congratulatory_message: Displays a congratulatory message page. <br>
-                    /logout: Logs the user out by popping the 'username' from the session. <br>
-                    /search: Handles a POST request to search for examinees based on a search query and displays the results. <br>
-                    /booking_process: Handles the booking process when a user submits a form with examinee information. It inserts data into the appropriate table based on the selection and checks if the examinee passed the examination. <br>
-                    /examinees: Displays a list of examinees. It allows filtering by various criteria and supports pagination. <br>
-                    /examinees/passed: Displays a list of examinees who passed the examination (filtered). <br>
-                    /login: Displays a login page and handles user login attempts. <br>
-                    /login_process: Handles the login process by checking the user's credentials and setting a session variable if the login is successful. <br>
-                    /register: Displays a registration page and handles user registration. <br>
-                    /display: Displays a table of registered users. <br>
-                    /delete_process/<string:id>/: Deletes a user based on their user ID. <br>
-                    /update_process_one/<string:id>/: Displays a form to update user information based on user ID. <br>
-                    /update_process_two: Handles the user information update process. <br>
-                    /examinee_delete/<string:id>/: Deletes an examinee based on their ID. <br>
-                    /examinee_update_one/<string:id>/: Displays a form to update examinee information based on ID. <br>
-                    /examinee_update_two: Handles the examinee information update process. <br>
-                </p>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="display-4">DICT</h1>
+                <p class="lead">This is a <span class="font-italic">web-based</span>, <span class="font-italic">CRUD</span> automation <span class="font-italic">system</span> that automates examinee data.</p>
+                <a class="btn btn-primary" href="/examinees" role="button">Start Now</a>
             </div>
         </div>
     </div>
-</div>
+</header>
 
+<!-- Include Bootstrap and jQuery JavaScript -->
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>

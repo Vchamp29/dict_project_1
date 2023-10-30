@@ -127,7 +127,7 @@ def booking_process():
 
         # Define a table label mapping
         table_labels = {
-            'examinees': 'Examinees',
+            'dict_diagnostic_examinees': 'Examinees',
             '2023_ict_diagnostic_passers': 'Dict Diag. Examinee',
             '2023_users_assessment_examinees': 'Users Assessment Examinee',
             'ict_edp_examinees': 'ICT EDP Examinee',
@@ -172,6 +172,41 @@ def booking_process():
 
 
 
+@app.route('/get_examinees_data', methods=['GET'])
+def get_examinees_data():
+    try:
+        examinees_type = request.args.get('type')
+        result = get_examinees_data_from_db(examinees_type)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
+def get_examinees_data_from_db(examinees_type, search_query):
+    conn = connection()
+    cursor = conn.cursor()
+
+    # Define the columns to search in for the specific examinees type
+    columns_to_search = [
+        'full_name', 'last_name', 'first_name', 'middle_name', 'gender',
+        'course', 'school', 'company_name', 'position', 'examination_date', 'exam_venue'
+    ]
+
+    # Construct the SQL query for searching in multiple columns for the specific examinees type
+    sql_query = f"""
+        SELECT * FROM {examinees_type}
+        WHERE {' OR '.join([f'{column} LIKE %s' for column in columns_to_search])}
+    """
+
+    # Execute the SQL query to fetch records
+    cursor.execute(sql_query, ['%' + search_query + '%' for _ in columns_to_search])
+    examinees_data = cursor.fetchall()
+
+    conn.close()
+
+    return {'examinees_data': examinees_data}
+
+
+
 
 
 
@@ -194,7 +229,7 @@ def search_database(query):
     tables_to_search = [
         '2023_ict_diagnostic_passers',
         '2023_users_assessment_examinees',
-        'examinees',
+        'dict_diagnostic_examinees',
         'ict_edp_examinees',
         'ict_edp_passers'
     ]
@@ -252,13 +287,13 @@ def examinees():
 
     # Construct the SQL query for searching in multiple columns
     sql_query = f"""
-        SELECT * FROM examinees
+        SELECT * FROM dict_diagnostic_examinees
         WHERE {' OR '.join([f'{column} LIKE %s' for column in columns_to_search])}
     """
 
     # Construct the SQL query for counting total records
     count_query = f"""
-        SELECT COUNT(*) FROM examinees
+        SELECT COUNT(*) FROM dict_diagnostic_examinees
         WHERE {' OR '.join([f'{column} LIKE %s' for column in columns_to_search])}
     """
 
@@ -276,6 +311,7 @@ def examinees():
 
     # Pass the search results data, filter, and search_query to the 'examinees.html' template
     return render_template('examinees.html', examinees_data=examinees_data, page=page, total_pages=total_pages, filter=filter_value, search_query=search_query)
+
 
 # Update the '/examinees/passed' route
 @app.route('/examinees/passed', methods=['GET', 'POST'])
@@ -391,7 +427,7 @@ def delete_process(id):
 def examinee_delete(id):
     conn = connection()
     cur = conn.cursor()
-    cur.execute("DELETE FROM examinees WHERE id = %s", (id,))
+    cur.execute("DELETE FROM dict_diagnostic_examinees WHERE id = %s", (id,))
     conn.commit()
     conn.close()
     return redirect(url_for('examinees'))
