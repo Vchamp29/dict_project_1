@@ -27,17 +27,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/booking">Insert Process</a>
                 </li>
-                <!-- Hoverable dropdown -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="examineesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Examinees
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="examineesDropdown">
-                        <a class="dropdown-item" href="/examinees?type=2023_ict_diagnostic_passers">ICT Diagnostic Examinees</a>
-                        <a class="dropdown-item" href="/examinees?type=2023_users_assessment_examinees">Users Assessment Examinees</a>
-                        <a class="dropdown-item" href="/examinees?type=ict_edp_examinees">ICT EDP Examinees</a>                        
-                    </div>
-                </li>                
+                <li class="navbar-item">
+                    <a class="nav-link" href="/examinees">Examinees</a>
+                </li>
             </ul>
             <ul class="navbar-nav ml-auto">
                 {% if session.username %}
@@ -46,7 +38,6 @@
                         Welcome, {{ session.username }}
                     </a>
                     <div class="dropdown-menu" aria-labelledby="userDropdown">
-                        <a class="dropdown-item" href="#">Profile</a>
                         <a class="dropdown-item" href="/logout">Logout</a>
                     </div>
                 </li>

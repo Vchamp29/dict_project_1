@@ -207,6 +207,20 @@ def get_examinees_data_from_db(examinees_type, search_query):
 
 
 
+# Add this route to your Flask application
+@app.route('/filter-results', methods=['GET'])
+def filter_results():
+    selected_table = request.args.get('filter')
+    search_query = request.args.get('search_query')
+    # Implement your filter logic here based on the selected_table and search_query
+    # Return the filtered results as JSON or HTML, depending on your needs
+    # For example, you can use the same search_database function you defined earlier
+
+    # Replace this with your actual filtered results data
+    filtered_data = search_database(search_query)
+
+    # Return the filtered data as JSON
+    return jsonify(filtered_data)
 
 
 
@@ -279,38 +293,48 @@ def examinees():
 
     per_page = 10  # Number of records to display per page
 
-    # Define the columns to search in
-    columns_to_search = [
-        'full_name', 'last_name', 'first_name', 'middle_name', 'gender',
-        'course', 'school', 'company_name', 'position', 'examination_date', 'exam_venue'
-    ]
+    if filter_value == 'All':
+        # If 'All' is selected, construct a query to search in all relevant tables
+        tables_to_search = [
+            '2023_ict_diagnostic_passers',
+            '2023_users_assessment_examinees',
+            'dict_diagnostic_examinees',
+            'ict_edp_examinees',
+        ]
 
-    # Construct the SQL query for searching in multiple columns
-    sql_query = f"""
-        SELECT * FROM dict_diagnostic_examinees
-        WHERE {' OR '.join([f'{column} LIKE %s' for column in columns_to_search])}
-    """
+        # Create an empty list to store results
+        all_results = []
 
-    # Construct the SQL query for counting total records
-    count_query = f"""
-        SELECT COUNT(*) FROM dict_diagnostic_examinees
-        WHERE {' OR '.join([f'{column} LIKE %s' for column in columns_to_search])}
-    """
+        for table in tables_to_search:
+            sql_query = f"SELECT * FROM {table} WHERE full_name LIKE %s OR last_name LIKE %s OR first_name LIKE %s"
+            cur.execute(sql_query, ('%' + search_query + '%', '%' + search_query + '%', '%' + search_query + '%'))
+            results = cur.fetchall()
+            all_results.extend(results)
 
-    # Execute the SQL query to fetch records with pagination and sorting
-    cur.execute(sql_query + f" ORDER BY full_name ASC LIMIT %s OFFSET %s",
-                (['%' + search_query + '%'] * len(columns_to_search)) + [per_page, (page - 1) * per_page])
-    examinees_data = cur.fetchall()
+        total_records = len(all_results)
 
-    # Execute the SQL query to count total records
-    cur.execute(count_query, (['%' + search_query + '%'] * len(columns_to_search)))
-    total_records = cur.fetchone()[0]
-    total_pages = (total_records + per_page - 1) // per_page
+        # Calculate total pages based on total records
+        total_pages = (total_records + per_page - 1) // per_page
+
+        # Slice the results to display the current page
+        start_index = (page - 1) * per_page
+        end_index = start_index + per_page
+        current_results = all_results[start_index:end_index]
+
+    else:
+        # Use the selected table in the query
+        sql_query = f"SELECT * FROM {filter_value} WHERE full_name LIKE %s OR last_name LIKE %s OR first_name LIKE %s"
+        cur.execute(sql_query, ('%' + search_query + '%', '%' + search_query + '%', '%' + search_query + '%'))
+        current_results = cur.fetchall()
+
+        # Calculate total records and total pages based on the filtered results
+        total_records = len(current_results)
+        total_pages = (total_records + per_page - 1) // per_page
 
     conn.close()  # Close the database connection
 
     # Pass the search results data, filter, and search_query to the 'examinees.html' template
-    return render_template('examinees.html', examinees_data=examinees_data, page=page, total_pages=total_pages, filter=filter_value, search_query=search_query)
+    return render_template('examinees.html', examinees_data=current_results, page=page, total_pages=total_pages, filter=filter_value, search_query=search_query)
 
 
 # Update the '/examinees/passed' route
