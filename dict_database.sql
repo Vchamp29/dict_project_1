@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 10, 2023 at 02:11 AM
+-- Generation Time: Oct 30, 2023 at 08:33 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -50,7 +50,7 @@ CREATE TABLE `2023_ict_diagnostic_passers` (
 --
 
 INSERT INTO `2023_ict_diagnostic_passers` (`id`, `label`, `full_name`, `last_name`, `first_name`, `middle_name`, `gender`, `profession_or_student`, `course`, `school`, `company_name`, `position`, `examination_date`, `exam_venue`, `status`) VALUES
-(1, 'DICT Diag. Examinee', 'Besinga, Ronald D.', 'Besinga', 'Ronald', 'D.', 'Male', 'Student ', 'BS in Information Technology', 'Saint Francis Xavier College', 'N/A', 'Student', 'April 12, 2023', 'DTC San Francisco, Agusan del Sur', 'Passed'),
+(1, 'DICT Diag. Examinee', 'Besinga, Ronald D.', 'Besinga', 'Ronald', 'D.', 'Male', 'Professional', 'BS in Information Technology', 'Saint Francis Xavier College', 'N/A', 'Student', 'April 12, 2023', 'DTC San Francisco, Agusan del Sur', 'Passed'),
 (2, 'DICT Diag. Examinee', 'Cutamora,   John Michael F. ', 'Cutamora', 'John Michael ', 'F.', 'Male', 'Professional', 'BS in Computer Science', 'Surigao del Sur State University ', 'Caraga State University', 'Data Controller II', 'March 22, 2023', 'DICT Agusan del Norte, Butuan City', 'Passed'),
 (3, 'DICT Diag. Examinee', 'Escol, John Binze B. ', 'Escol ', 'John Binze', 'B.', 'Male', 'Student', 'BS in Information Technology', 'ACLC College of  Butuan', 'N/A', 'N/A', 'March 22, 2023', 'DICT Agusan del Norte, Butuan City', 'Passed'),
 (4, 'DICT Diag. Examinee', 'Molina, Jundee Mark G. ', 'Molina', 'Jundee ', 'G.', 'Male', 'Professional', 'BS in Computer Science', 'Caraga State University', 'Caraga State University', 'Programmer', 'March 22, 2023', 'DICT Agusan del Norte, Butuan City', 'Passed'),
@@ -137,10 +137,10 @@ INSERT INTO `2023_users_assessment_examinees` (`id`, `label`, `full_name`, `last
 -- --------------------------------------------------------
 
 --
--- Table structure for table `examinees`
+-- Table structure for table `dict_diagnostic_examinees`
 --
 
-CREATE TABLE `examinees` (
+CREATE TABLE `dict_diagnostic_examinees` (
   `id` int(11) NOT NULL,
   `label` varchar(20) NOT NULL,
   `full_name` varchar(512) DEFAULT NULL,
@@ -158,10 +158,10 @@ CREATE TABLE `examinees` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `examinees`
+-- Dumping data for table `dict_diagnostic_examinees`
 --
 
-INSERT INTO `examinees` (`id`, `label`, `full_name`, `last_name`, `first_name`, `middle_name`, `gender`, `profession_or_student`, `course`, `school`, `company_name`, `position`, `examination_date`, `exam_venue`) VALUES
+INSERT INTO `dict_diagnostic_examinees` (`id`, `label`, `full_name`, `last_name`, `first_name`, `middle_name`, `gender`, `profession_or_student`, `course`, `school`, `company_name`, `position`, `examination_date`, `exam_venue`) VALUES
 (1, 'Dict Diag. Examinee', 'Alcober, Kristine C.', 'Alcober', 'Kristine', 'C.', 'Female', 'Student', 'BS in Computer Science', 'Caraga State University', 'N/A', 'N/A', 'March 22, 2023', 'DICT Agusan del Norte, Butuan City'),
 (2, 'Dict Diag. Examinee', 'Alquizar, Raid D. ', 'Alquizar', 'Raid ', 'D.', 'Male', 'Student', 'BS in Computer Science', 'Father Saturnino Urios University', 'N/A', 'N/A', 'March 22, 2023', 'DICT Agusan del Norte, Butuan City'),
 (3, 'Dict Diag. Examinee', 'Balaba, Ian Dominic D. ', 'Balaba', 'Ian Dominic', 'D.', 'Male', 'Student', 'BS in Information Technology', 'Father Saturnino Urios University', 'N/A', 'N/A', 'March 22, 2023', 'DICT Agusan del Norte, Butuan City'),
@@ -171,7 +171,6 @@ INSERT INTO `examinees` (`id`, `label`, `full_name`, `last_name`, `first_name`, 
 (7, 'Dict Diag. Examinee', 'Dangga, Louremarsh B.', 'Dangga', 'Louremarsh', 'B.', 'Female', 'Professional', 'BS in Information Technology', 'Father Saturnino Urios University', 'DepEd Agusan del Norte', 'Admin Assisstant I', 'March 22, 2023', 'DICT Agusan del Norte, Butuan City'),
 (8, 'Dict Diag. Examinee', 'Dinggay, Angelo ', 'Dinggay', 'Angelo', '', 'Male', 'Student', 'BS in Information Technology', 'Saint Michael College of Caraga', 'N/A', 'N/A', 'March 22, 2023', 'DICT Agusan del Norte, Butuan City'),
 (9, 'Dict Diag. Examinee', 'Duga, Paulo A.', 'Duga', 'Paulo', 'A.', 'Male', 'Student', 'BS in Information System', 'Caraga State University', 'N/A', 'N/A', 'March 22, 2023', 'DICT Agusan del Norte, Butuan City'),
-(10, 'Dict Diag. Examinee', 'Escol, John Binze B. ', 'Escol ', 'John Binze', 'B.', 'Male', 'Student', 'BS in Information Technology', 'ACLC College of  Butuan', 'N/A', 'N/A', 'March 22, 2023', 'DICT Agusan del Norte, Butuan City'),
 (11, 'Dict Diag. Examinee', 'Gelbolingo, Thommy S. ', 'Gelbolingo', 'Thommy', 'S.', 'Male', 'Professional', 'BS in Computer Science', 'Father Saturnino Urios University', 'PNP Butuan City', 'Police Staff Sergeant', 'March 22, 2023', 'DICT Agusan del Norte, Butuan City'),
 (12, 'Dict Diag. Examinee', 'Gumapac, John Vence A.', 'Gumapac ', ' John Vence', 'A.', 'Male', 'Student', 'BS in Computer Science', 'Caraga State University', 'N/A', 'N/A', 'March 22, 2023', 'DICT Agusan del Norte, Butuan City'),
 (13, 'Dict Diag. Examinee', 'Jone, Kent Vincent E. ', 'Jone', 'Kent Vincent', 'E.', 'Male', 'Professional', 'BS in Information Technology', 'Father Saturnino Urios University', 'DPWH Caraga', 'Admin Aide I', 'March 22, 2023', 'DICT Agusan del Norte, Butuan City'),
@@ -378,7 +377,7 @@ INSERT INTO `examinees` (`id`, `label`, `full_name`, `last_name`, `first_name`, 
 (214, 'Dict Diag. Examinee', 'Gastardo, Rodel C.', 'Gastardo', 'Rodel', 'C.', 'Male', 'Student', 'BS in Information Technology', 'ACLC College of Butuan City', 'N/A', 'N/A', 'June 14, 2023', 'School/University'),
 (215, 'Dict Diag. Examinee', 'Conales, Roel JR. Q.', 'Conales', 'Roel JR.', 'Q.', 'Male', 'Student', 'BS in Information Technology', 'ACLC College of Butuan City', 'N/A', 'N/A', 'June 14, 2023', 'School/University'),
 (216, 'Dict Diag. Examinee', 'Titoy, Mark Stepher J.', 'Titoy', 'Mark', 'J.', 'Male', 'Student', 'BS in Computer Science', 'North Eastern Mindanao State University - Tandag Campus', 'N/A', 'N/A', 'July 03, 2023', 'School/University');
-INSERT INTO `examinees` (`id`, `label`, `full_name`, `last_name`, `first_name`, `middle_name`, `gender`, `profession_or_student`, `course`, `school`, `company_name`, `position`, `examination_date`, `exam_venue`) VALUES
+INSERT INTO `dict_diagnostic_examinees` (`id`, `label`, `full_name`, `last_name`, `first_name`, `middle_name`, `gender`, `profession_or_student`, `course`, `school`, `company_name`, `position`, `examination_date`, `exam_venue`) VALUES
 (217, 'Dict Diag. Examinee', 'Fernandez, Jasper A.', 'Fernandez', 'Jasper', 'A.', 'Male', 'Student', 'BS in Computer Science', 'North Eastern Mindanao State University - Tandag Campus', 'N/A', 'N/A', 'July 03, 2023', 'School/University'),
 (218, 'Dict Diag. Examinee', 'Pajenado, Reynand V.', 'Pajenando', 'Reynand', 'V.', 'Male', 'Student', 'BS in Computer Science', 'North Eastern Mindanao State University - Tandag Campus', 'N/A', 'N/A', 'July 03, 2023', 'School/University'),
 (219, 'Dict Diag. Examinee', 'Malino, Meriza C.', 'Malino', 'Meriza', 'C.', 'Female', 'Student', 'BS in Computer Science', 'North Eastern Mindanao State University - Tandag Campus', 'N/A', 'N/A', 'July 03, 2023', 'School/University'),
@@ -486,7 +485,7 @@ CREATE TABLE `ict_edp_passers` (
 --
 
 INSERT INTO `ict_edp_passers` (`id`, `label`, `full_name`, `last_name`, `first_name`, `middle_name`, `gender`, `profession_or_student`, `course`, `school`, `company_name`, `position`, `examination_date`, `exam_venue`, `status`) VALUES
-(0, 'ICT EDP Examinee', 'Jimenez, Hayacinth joy C.', 'Jimenez', 'Hayacinth joy', 'C.', 'Female ', 'Student', 'BS in Computer Science', 'Caraga State University', 'N/A', 'N/A', 'March 15, 2023', 'DICT Agusan del Norte, Butuan City', 'Passed'),
+(1, 'ICT EDP Examinee', 'Jimenez, Hayacinth joy C.', 'Jimenez', 'Hayacinth joy', 'C.', 'Female ', 'Student', 'BS in Computer Science', 'Caraga State University', 'N/A', 'N/A', 'March 15, 2023', 'DICT Agusan del Norte, Butuan City', 'Passed'),
 (2, 'ICT EDP Examinee', 'Yamba, Jonace P.', 'Yamba', 'Jonace', 'P.', 'Male', 'Student', 'BS in Information Technology', 'Caraga State University', 'N/A', 'N/A', 'March 15, 2023', 'DICT Agusan del Norte, Butuan City', 'Passed');
 
 -- --------------------------------------------------------
@@ -506,6 +505,7 @@ CREATE TABLE `tbl_users` (
 --
 
 INSERT INTO `tbl_users` (`user_id`, `username`, `password`) VALUES
+(103910293, 'admin2', '$2b$12$EKViF7SWJZfr36U8etLA1ubFZNlMh/wAub0LLdCVk89y1M2eiyYKy'),
 (2147483647, 'admin', '$2b$12$2I/he.8HMoDQZc44hDk4oe5gCLEKeKEH/D81T9cp6tuEbMQBkidGG');
 
 --
@@ -525,9 +525,9 @@ ALTER TABLE `2023_users_assessment_examinees`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `examinees`
+-- Indexes for table `dict_diagnostic_examinees`
 --
-ALTER TABLE `examinees`
+ALTER TABLE `dict_diagnostic_examinees`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -551,6 +551,12 @@ ALTER TABLE `tbl_users`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `ict_edp_passers`
+--
+ALTER TABLE `ict_edp_passers`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `tbl_users`
