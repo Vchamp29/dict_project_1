@@ -11,6 +11,22 @@
         .nav-item:hover .dropdown-menu {
             display: block;
         }
+        .center-text {
+            text-align: center;
+            font-size: larger;
+            margin-top: 50px;
+        }
+        /* CSS for the logo image */
+        .logo-image {
+            width: 300px; /* Adjust this value as needed */
+        }
+        .logo-image2 {
+            width: 300px;
+        }
+        /* CSS for the DICT text */
+        .dict-text {
+            font-family: 'Lato', sans-serif;
+        }
     </style>
 </head>
 <body>
@@ -53,9 +69,20 @@
     <div class="container mt-5">
         <div class="row">
             <div class="col-12 text-center">
-                <h1 class="display-4">DICT</h1>
+                <h1 class="display-4 dict-text">DICT</h1>
                 <p class="lead">This is a <span class="font-italic">web-based</span>, <span class="font-italic">CRUD</span> automation <span class="font-italic">system</span> that automates examinee data.</p>
                 <a class="btn btn-primary" href="/examinees" role="button">Start Now</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 center-text">
+                <p>Powered By:</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 center-text">
+                <img class="logo-image" src="https://upload.wikimedia.org/wikipedia/commons/d/d1/DICT-Logo-Final-2-300x153.png" alt="Logo">
+                <img class="logo-image2" src="static/img/ilcdb_logo.png" alt="">
             </div>
         </div>
     </div>

@@ -276,7 +276,6 @@ def search_database(query):
     conn.close()
     return dict_database
 
-
 @app.route('/examinees', methods=['GET', 'POST'])
 def examinees():
     conn = connection()

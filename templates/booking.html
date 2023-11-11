@@ -14,77 +14,43 @@
         .examinee-information {
             color: black; /* Set text color to black */
         }
-        .navbar {
-        background-color: rgba(0, 0, 0, 0.7);
-        }
-
-        .navbar-brand {
-            font-size: 24px;
-        }
-
-        .navbar-toggler-icon {
-            background-color: white;
-        }
-
-        .nav-item {
-            margin-right: 20px;
-        }
-
-        .nav-link {
-            color: white;
-            font-size: 18px;
-        }
             /* Login Styling */
         .login {
             display: flex;
             justify-content: flex-end;
         }
-
-        /* Navbar Navigation Styling */
-        .navbar-nav {
-            display: flex;
-            align-items: center;
-        }
-
-        .navbar-nav .username {
-            margin-left: auto;
+        .nav-item:hover .dropdown-menu {
+            display: block;
         }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <a class="navbar-brand" href="/">DICT Caraga</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <!-- Bootstrap Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="/">Home</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="/">Home</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" href="/booking">Insert Process</a>
                 </li>
-                <li class="nav-item">
+                <li class="navbar-item">
                     <a class="nav-link" href="/examinees">Examinees</a>
                 </li>
             </ul>
             <ul class="navbar-nav ml-auto">
                 {% if session.username %}
-                <!-- Dropdown menu for logged-in user -->
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
-                       aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Welcome, {{ session.username }}
                     </a>
                     <div class="dropdown-menu" aria-labelledby="userDropdown">
-                        <a class="dropdown-item" href="#">Profile</a>
                         <a class="dropdown-item" href="/logout">Logout</a>
                     </div>
                 </li>
                 {% else %}
-                <!-- Login link for guests -->
                 <li class="nav-item">
                     <a class="nav-link" href="/login">Login</a>
                 </li>
