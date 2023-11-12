@@ -1,4 +1,5 @@
 # DICT
+# Nov. 12, 2023 updated header tables format
 # Nov. 8, 2023 Updated the filter function to work
 # Nov. 8, 2023 appended the Label header to the first column
 # Nov. 8, 2023 Added Horizontal and Vertical scrolling for the table
