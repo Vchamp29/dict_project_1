@@ -1,5 +1,7 @@
 # DICT
 # Nov. 8, 2023 Updated the filter function to work
+# Nov. 8, 2023 appended the Label header to the first column
+# Nov. 8, 2023 Added Horizontal and Vertical scrolling for the table
 ![image](https://github.com/vincethegreat/dict_project_1/assets/107093872/7e699730-81d2-4c96-ba8e-6662271b9096)
 
 # Nov. 11, 2023 Add Logo Image i.e "DICT LOGO, ILCDB LOGO)
