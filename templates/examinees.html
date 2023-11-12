@@ -461,10 +461,40 @@
         const words = header.split('_');
         
         // Capitalize the first letter of each word
-        const capitalizedWords = words.map(word => word.charAt(0).toUpperCase() + word.slice(1));
+        const capitalizedWords = words.map(word => {
+            // Capitalize "ict" and "edp"
+            if (word.toLowerCase() === 'ict' || word.toLowerCase() === 'edp') {
+                return word.toUpperCase();
+            } else {
+                return word.charAt(0).toUpperCase() + word.slice(1);
+            }
+        });
+
+        // Remove any occurrences of "2023" in the words
+        const filteredWords = capitalizedWords.filter(word => !word.includes('2023'));
 
         // Join the words with a space to create the formatted header
-        return capitalizedWords.join(' ');
+        return filteredWords.join(' ');
+    }
+
+    function formatTableName(tableName) {
+        // Split the tableName by underscores
+        const words = tableName.split('_');
+        
+        // Capitalize the first letter of each word and fully capitalize "ict" and "edp"
+        const capitalizedWords = words.map(word => {
+            if (word.toLowerCase() === 'ict' || word.toLowerCase() === 'edp' || word.toLowerCase() === 'dict') {
+                return word.toUpperCase();
+            } else {
+                return word.charAt(0).toUpperCase() + word.slice(1);
+            }
+        });
+
+        // Remove any occurrences of "2023" in the words
+        const filteredWords = capitalizedWords.filter(word => !word.includes('2023'));
+
+        // Join the words with a space to create the formatted tableName
+        return filteredWords.join(' ');
     }
 
 

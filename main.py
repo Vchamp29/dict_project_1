@@ -277,6 +277,7 @@ def search_database(query):
     return dict_database
 
 @app.route('/examinees', methods=['GET', 'POST'])
+@login_required
 def examinees():
     conn = connection()
     cur = conn.cursor()
@@ -401,6 +402,7 @@ def login_process():
 
 
 @app.route('/register', methods=['GET', 'POST'])
+@login_required
 def register():
     if request.method == 'POST':
         user_id = request.form['user_id']
@@ -427,6 +429,7 @@ def register():
 
 #fetching users to display in a table
 @app.route('/display')
+@login_required
 def display():
 	conn = connection()
 	cur = conn.cursor()
