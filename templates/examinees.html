@@ -89,12 +89,12 @@
                         <option value="dict_diagnostic_examinees">Dict Diagnostic Examinees</option>
                         <option value="ict_edp_examinees">ICT EDP Examinees</option>
                     </select>                                     
-                    <button type="button" class="btn btn-secondary" id="apply-filter-button">Apply Filter</button>
+                    <button type="button" class="btn btn-secondary" id="apply-filter-button" style="margin-top: 5px;">Apply Filter</button>
                 </form>
                 <!-- Button trigger modal -->
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                    Launch demo modal
-                </button>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" style="margin-top: 5px;">
+                    Insert Users
+                </button>                
                 
                 <!-- Modal -->
                 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -197,10 +197,10 @@
                     </div>
                 </div>
   
-                <div class="no-print">
+                <div class="no-print" style="display: flex; justify-content: center; align-items: center; margin-top: -136px;">
                     <a>PS. Reload after deleting an <span>ITEM</span></a>
-                    <button id="print-button" class="btn btn-secondary" onclick="printResults()">Print Results</button>
                 </div>
+                              
             </div>
         </div>
     </div>
@@ -220,74 +220,63 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const form = document.getElementById('search-form');
-        const resultsDiv = document.getElementById('results');
-        const updateForm = document.getElementById('update-form');
-        const printButton = document.getElementById('print-button');
-        const filterSelect = document.getElementById('filter');
-        const applyFilterButton = document.getElementById('apply-filter-button');
+ document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('search-form');
+    const resultsDiv = document.getElementById('results');
+    const updateForm = document.getElementById('update-form');
+    const filterSelect = document.getElementById('filter');
+    const applyFilterButton = document.getElementById('apply-filter-button');
 
-        // Initially hide the "Print Results" button
-        printButton.style.display = 'none';
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(form);
-            try {
-                const response = await fetch('/search', {
-                    method: 'POST',
-                    body: formData,
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    renderResults(data);
-                    // Show the "Print Results" button when there are search results
-                    printButton.style.display = 'block';
-                } else {
-                    console.error('Response not OK');
-                }
-            } catch (error) {
-                console.error('Fetch error:', error);
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+        try {
+            const response = await fetch('/search', {
+                method: 'POST',
+                body: formData,
+            });
+            if (response.ok) {
+                const data = await response.json();
+                renderResults(data);
+            } else {
+                console.error('Response not OK');
             }
-        });
-
-        // Add an event listener to the print button
-        printButton.addEventListener('click', () => {
-            printResultsTable();
-        });
-
-        // Add an event listener to the "Apply Filter" button
-        applyFilterButton.addEventListener('click', () => {
-            applyFilter();
-        });
-        async function applyFilter() {
-            const selectedTable = filterSelect.value;
-            const searchQuery = document.getElementById('query').value;
-            try {
-                const response = await fetch(`/filter-results?filter=${selectedTable}&search_query=${searchQuery}`, {
-                    method: 'GET',
-                });
-
-                if (response.ok) {
-                    const data = await response.json(); // Parse the response as JSON
-                    const tableContainer = renderFilterResultsTable(data); // Render the table
-
-                    if (tableContainer) {
-                        resultsDiv.innerHTML = ''; // Clear the results div
-                        resultsDiv.appendChild(tableContainer); // Append the new table
-                        // Show the "Print Results" button when there are search results
-                        printButton.style.display = 'block';
-                    } else {
-                        console.error('Failed to create table container');
-                    }
-                } else {
-                    console.error('Filtering error:', response.status, response.statusText);
-                }
-            } catch (error) {
-                console.error('Filtering error:', error);
-            }
+        } catch (error) {
+            console.error('Fetch error:', error);
         }
+    });
+
+    // Add an event listener to the "Apply Filter" button
+    applyFilterButton.addEventListener('click', () => {
+        applyFilter();
+    });
+    async function applyFilter() {
+        const selectedTable = filterSelect.value;
+        const searchQuery = document.getElementById('query').value;
+        try {
+            const response = await fetch(`/filter-results?filter=${selectedTable}&search_query=${searchQuery}`, {
+                method: 'GET',
+            });
+
+            if (response.ok) {
+                const data = await response.json(); // Parse the response as JSON
+                const tableContainer = renderFilterResultsTable(data); // Render the table
+
+                if (tableContainer) {
+                    resultsDiv.innerHTML = ''; // Clear the results div
+                    resultsDiv.appendChild(tableContainer); // Append the new table
+                } else {
+                    console.error('Failed to create table container');
+                }
+            } else {
+                console.error('Filtering error:', response.status, response.statusText);
+            }
+        } catch (error) {
+            console.error('Filtering error:', error);
+        }
+    }
+
+
 
 
 
@@ -496,8 +485,10 @@
 
     function renderResults(results) {
         resultsDiv.innerHTML = '';
+        let resultsFound = false;
         for (const [tableName, tableData] of Object.entries(results)) {
             if (tableData.columns.length > 0 && tableData.data.length > 0) {
+                resultsFound = true;
                 const tableHeading = document.createElement('h2');
                 tableHeading.textContent = formatTableName(tableName);
                 resultsDiv.appendChild(tableHeading);
@@ -560,7 +551,11 @@
                 resultsDiv.appendChild(tableContainer);
             }
         }
+        if (!resultsFound) {
+          resultsDiv.innerHTML = '<div style="display: flex; justify-content: center; align-items: center; font-size: 2em; font-weight: bold;">No Results Found</div>';
+        }
     }
+
 
 
 

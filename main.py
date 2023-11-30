@@ -258,15 +258,19 @@ def search_database(query):
         # Store the rows in a list of dictionaries
         rows = []
 
-        if status_column_exists:
-            cursor.execute(f"SELECT * FROM {table} WHERE status LIKE %s OR full_name LIKE %s OR school LIKE %s OR exam_venue LIKE %s OR profession_or_student LIKE %s OR course LIKE %s OR company_name LIKE %s OR position LIKE %s OR examination_date LIKE %s",
-                           ('%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%'))
-        else:
-            cursor.execute(f"SELECT * FROM {table} WHERE full_name LIKE %s OR school LIKE %s OR exam_venue LIKE %s OR profession_or_student LIKE %s OR course LIKE %s OR company_name LIKE %s OR position LIKE %s OR examination_date LIKE %s",
-                           ('%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%'))
+        # Get all column names
+        cursor.execute(f"SHOW COLUMNS FROM {table}")
+        column_names = [column[0] for column in cursor.fetchall()]
 
-        # Get the column names
-        column_names = [column[0] for column in cursor.description]
+        # Generate the WHERE clause dynamically based on columns
+        where_clause = " OR ".join([f"{column} LIKE %s" for column in column_names])
+
+        # Construct the query
+        query_template = f"SELECT * FROM {table} WHERE {where_clause}"
+        query_params = tuple(['%' + query + '%'] * len(column_names))
+
+        # Execute the query
+        cursor.execute(query_template, query_params)
 
         # Get the rows as dictionaries
         rows = [dict(zip(column_names, row)) for row in cursor.fetchall()]
@@ -275,6 +279,7 @@ def search_database(query):
 
     conn.close()
     return dict_database
+
 
 @app.route('/examinees', methods=['GET', 'POST'])
 @login_required
