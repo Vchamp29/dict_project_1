@@ -1,4 +1,6 @@
 # DICT
+# Nov. 29, 2023 Added modal dialog box for the examinees page
+![image](https://github.com/vincethegreat/dict_project_1/assets/107093872/a90ed968-f87e-40ad-8477-da89180bab6b)
 # Nov. 12, 2023 updated header tables format
 # Nov. 8, 2023 Updated the filter function to work
 # Nov. 8, 2023 appended the Label header to the first column
