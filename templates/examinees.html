@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Database Search</title>
     <!-- Add Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.8.2/css/pikaday.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     
@@ -13,7 +14,8 @@
             width: 250px; /* Adjust the width as needed */
         }
         .table-container {
-            max-height: 400px; /* Adjust the height as needed */
+            margin-top: 40px;
+            max-height: 500px; /* Adjust the height as needed */
             overflow-y: auto;
         }
                 /* Custom CSS for hoverable dropdown menu */
@@ -73,8 +75,6 @@
                 <h1 class="text-center np-print">Database Search</h1>
                 <form id="search-form">
                     <div class="form-group">
-                        <label for="filter">Filter by Table:</label>
-
                         <label for="query">Search Query:</label>
                         <div class="input-group">
                             <input type="text" id="query" name="query" class="form-control" required>
@@ -83,16 +83,18 @@
                             </div>
                         </div>
                     </div>
-                    <select id="filter" name="filter" class="form-select custom-select-width">
-                        <option value="#" disabled selected>Select Table...</option>
-                        <option value="2023_users_assessment_examinees">2023 Users Assessment Examinees</option>
-                        <option value="dict_diagnostic_examinees">Dict Diagnostic Examinees</option>
-                        <option value="ict_edp_examinees">ICT EDP Examinees</option>
-                    </select>                                     
-                    <button type="button" class="btn btn-secondary" id="apply-filter-button" style="margin-top: 5px;">Apply Filter</button>
+                    <div class="d-flex align-items-center"> <!-- Add this div -->
+                        <select id="filter" name="filter" class="form-select custom-select-width mr-2"> <!-- Add mr-2 class -->
+                            <option value="#" disabled selected>Select Table...</option>
+                            <option value="2023_users_assessment_examinees">2023 Users Assessment Examinees</option>
+                            <option value="dict_diagnostic_examinees">Dict Diagnostic Examinees</option>
+                            <option value="ict_edp_examinees">ICT EDP Examinees</option>
+                        </select>
+                        <button type="button" class="btn btn-secondary" id="apply-filter-button">Apply Filter</button>
+                    </div> <!-- End of added div -->
                 </form>
                 <!-- Button trigger modal -->
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" style="margin-top: 5px;">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" style="margin-top: 15px;">
                     Insert Users
                 </button>                
                 
@@ -114,11 +116,9 @@
                                         <a class="select-table">Select Table</a>
                                     </label>
                                     <select class="form-control" id="table_selection" name="table_selection" required>
-                                        <option value="2023_ict_diagnostic_passers">Dict Diag. Examinee</option>
                                         <option value="2023_users_assessment_examinees">Users Assessment Examinee</option>
-                                        <option value="examinees">Examinees</option>
+                                        <option value="dict_diagnostic_examinees">DICT Diag. Examinees</option>
                                         <option value="ict_edp_examinees">ICT EDP Examinee</option>
-                                        <option value="ict_edp_passers">ICT EDP Passer</option>
                                     </select>
                                 </div>     
                                 <div class="form-group">
@@ -195,12 +195,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
-  
-                <div class="no-print" style="display: flex; justify-content: center; align-items: center; margin-top: -136px;">
-                    <a>PS. Reload after deleting an <span>ITEM</span></a>
-                </div>
-                              
+                </div>                       
             </div>
         </div>
     </div>
@@ -212,14 +207,25 @@
     </div>
 </header> 
 
-    
-    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.8.2/pikaday.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 
 <script>
+    var picker = new Pikaday({
+        field: document.getElementById('examination_date'),
+        format: 'MMMM D, YYYY',
+        toString(date, format) {
+            return moment(date).format(format);
+        },
+        parse(dateString, format) {
+            return moment(dateString, format).toDate();
+        }
+    });
  document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('search-form');
     const resultsDiv = document.getElementById('results');
@@ -275,15 +281,6 @@
             console.error('Filtering error:', error);
         }
     }
-
-
-
-
-
-
-
-
-
 
 
     // Function to print the results div
@@ -376,14 +373,6 @@
     }
 
 
-
-
-
-
-
-
-
-    
     function createUpdateDeleteButtons(row) {
         const updateButton = document.createElement('button');
         updateButton.textContent = 'Update';

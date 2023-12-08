@@ -128,10 +128,8 @@ def booking_process():
         # Define a table label mapping
         table_labels = {
             'dict_diagnostic_examinees': 'Examinees',
-            '2023_ict_diagnostic_passers': 'Dict Diag. Examinee',
             '2023_users_assessment_examinees': 'Users Assessment Examinee',
             'ict_edp_examinees': 'ICT EDP Examinee',
-            'ict_edp_passers': 'ICT EDP Passers',
         }
 
         # Get the table label based on the selected table
@@ -241,11 +239,9 @@ def search_database(query):
     dict_database = {}
 
     tables_to_search = [
-        '2023_ict_diagnostic_passers',
         '2023_users_assessment_examinees',
         'dict_diagnostic_examinees',
         'ict_edp_examinees',
-        'ict_edp_passers'
     ]
 
     for table in tables_to_search:
@@ -301,7 +297,6 @@ def examinees():
     if filter_value == 'All':
         # If 'All' is selected, construct a query to search in all relevant tables
         tables_to_search = [
-            '2023_ict_diagnostic_passers',
             '2023_users_assessment_examinees',
             'dict_diagnostic_examinees',
             'ict_edp_examinees',
@@ -419,15 +414,29 @@ def register():
 
         conn = connection()  # Establish a MySQL connection using the 'connection()' function
         cursor = conn.cursor()
-        
-        cursor.execute("INSERT INTO tbl_users (USER_ID, USERNAME, PASSWORD) VALUES (%s, %s, %s)", (user_id, uname, hashed_password))
-        conn.commit()
-        conn.close()  # Close the database connection
 
-        flash('Registration successful. You can now log in.', 'success')
-        return redirect('/login')
+        # Check if user_id or username already exists
+        cursor.execute("SELECT * FROM tbl_users WHERE USER_ID = %s OR USERNAME = %s", (user_id, uname))
+        existing_user = cursor.fetchone()
+        if existing_user:
+            flash('User ID or username already exists. Please choose a different one.', 'error')
+            return redirect('/register')
+        
+        try:
+            cursor.execute("INSERT INTO tbl_users (USER_ID, USERNAME, PASSWORD) VALUES (%s, %s, %s)", (user_id, uname, hashed_password))
+            conn.commit()
+            flash('Registration successful. You can now log in.', 'success')
+            return redirect('/login')
+        except Exception as e:
+            flash('An error occurred while creating your account. Please try again.', 'error')
+            app.logger.error(str(e))  # Log the error message
+
+        finally:
+            conn.close()  # Close the database connection
 
     return render_template('insert.html')
+
+
 
 
 
@@ -546,7 +555,7 @@ def examinee_update_two():
                                    profession_or_student, course, school, company_name, position,
                                    examination_date, exam_venue, examinee_id))
 
-        if selected_table in ['ict_edp_passers', '2023_ict_diagnostic_passers']:
+        if selected_table in ['ict_edp_examinees', 'dict_diagnostic_examinees', '2023_users_assessment_examinees']:
             # Check if the examinee passed and update the status in the 'passers' table
             if passed == 'Yes':
                 cur.execute("""
