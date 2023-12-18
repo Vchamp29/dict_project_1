@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 30, 2023 at 08:33 AM
--- Server version: 10.4.28-MariaDB
--- PHP Version: 8.2.4
+-- Generation Time: Dec 15, 2023 at 02:06 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -505,6 +505,7 @@ CREATE TABLE `tbl_users` (
 --
 
 INSERT INTO `tbl_users` (`user_id`, `username`, `password`) VALUES
+(10002991, 'dict_admin', '$2b$12$BGMsC2YaV1AvZqtBt7ipWOcybGUfbUefP2ODgAMQNpZq/ERjB6bya'),
 (103910293, 'admin2', '$2b$12$EKViF7SWJZfr36U8etLA1ubFZNlMh/wAub0LLdCVk89y1M2eiyYKy'),
 (2147483647, 'admin', '$2b$12$2I/he.8HMoDQZc44hDk4oe5gCLEKeKEH/D81T9cp6tuEbMQBkidGG');
 
