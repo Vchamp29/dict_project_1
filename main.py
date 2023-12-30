@@ -186,7 +186,7 @@ def get_examinees_data_from_db(examinees_type, search_query):
     # Define the columns to search in for the specific examinees type
     columns_to_search = [
         'full_name', 'last_name', 'first_name', 'middle_name', 'gender',
-        'course', 'school', 'company_name', 'position', 'examination_date', 'exam_venue'
+        'course', 'school', 'company_name', 'position', 'examination_date', 'exam_venue' , 'status'
     ]
 
     # Construct the SQL query for searching in multiple columns for the specific examinees type
