@@ -104,6 +104,7 @@ def delete_record(table_name, id):
         conn.close()
 
 
+
 @app.route('/booking_process', methods=['POST'])
 def booking_process():
     try:
@@ -139,18 +140,28 @@ def booking_process():
         conn = connection()
         cur = conn.cursor()
 
-        # Define the INSERT SQL query for the selected table, using the 'table_label' as the label value
+        # Fetch the current highest ID from the database
+        cur.execute(f"SELECT MAX(id) FROM {selected_table}")
+        max_id_result = cur.fetchone()
+        max_id = max_id_result[0] if max_id_result[0] is not None else 0
+
+        # Generate a new ID that does not start with 0
+        new_id = str(max_id + 1)
+        if new_id.startswith('0'):
+            new_id = '1' + new_id
+
+        # Define the INSERT SQL query for the selected table, including the new ID
         insert_query = f"""
-            INSERT INTO {selected_table} (label, full_name, last_name, first_name, middle_name, gender, 
+            INSERT INTO {selected_table} (id, label, full_name, last_name, first_name, middle_name, gender, 
             profession_or_student, course, school, company_name, position, examination_date, 
             exam_venue, status)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
 
-        # Execute the INSERT query with the provided data
-        cur.execute(insert_query, (table_label, full_name, last_name, first_name, middle_name, gender,
-                           profession_or_student, course, school, company_name, position,
-                           examination_date, exam_venue, passed))
+        # Execute the INSERT query with the provided data and the new ID
+        cur.execute(insert_query, (new_id, table_label, full_name, last_name, first_name, middle_name, gender,
+                                   profession_or_student, course, school, company_name, position,
+                                   examination_date, exam_venue, passed))
 
         # Commit the changes to the database
         conn.commit()
@@ -167,6 +178,8 @@ def booking_process():
         print(str(e))  # Print the error message for debugging
         flash('An error occurred while recording examinee information. Please try again.')
         return redirect(url_for('examinees'))
+
+
 
 
 

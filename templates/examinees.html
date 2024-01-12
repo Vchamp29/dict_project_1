@@ -95,7 +95,7 @@
                 </form>
                 <!-- Button trigger modal -->
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" style="margin-top: 15px;">
-                    Insert Users
+                    Insert Data
                 </button>                
                 
                 <!-- Modal -->
@@ -289,88 +289,96 @@
     }
 
     function renderFilterResultsTable(data) {
-        resultsDiv.innerHTML = '';
+    resultsDiv.innerHTML = '';
 
-        for (const [tableName, tableData] of Object.entries(data)) {
-            if (tableName === filterSelect.value) { // Check if the current table matches the selected table option
-                if (tableData.columns && tableData.data && Array.isArray(tableData.columns) && Array.isArray(tableData.data) && tableData.columns.length > 0 && tableData.data.length > 0) {
-                    const tableHeading = document.createElement('h2');
-                    tableHeading.textContent = formatTableName(tableName);
-                    resultsDiv.appendChild(tableHeading);
+    for (const [tableName, tableData] of Object.entries(data)) {
+        if (tableName === filterSelect.value) { // Check if the current table matches the selected table option
+            if (tableData.columns && tableData.data && Array.isArray(tableData.columns) && Array.isArray(tableData.data) && tableData.columns.length > 0 && tableData.data.length > 0) {
+                const tableHeading = document.createElement('h2');
+                tableHeading.textContent = formatTableName(tableName);
+                resultsDiv.appendChild(tableHeading);
 
-                    // Create a div for vertical scrolling
-                    const tableContainer = document.createElement('div');
-                    tableContainer.classList.add('table-container');
+                // Create a div for vertical scrolling
+                const tableContainer = document.createElement('div');
+                tableContainer.classList.add('table-container');
 
-                    // Create the table element
-                    const table = document.createElement('table');
-                    table.classList.add('table', 'table-bordered', 'table-striped');
+                // Create the table element
+                const table = document.createElement('table');
+                table.classList.add('table', 'table-bordered', 'table-striped');
 
-                    const thead = document.createElement('thead');
-                    const tbody = document.createElement('tbody');
+                const thead = document.createElement('thead');
+                const tbody = document.createElement('tbody');
 
-                    const headers = tableData.columns;
+                const headers = tableData.columns;
 
-                    const headerRow = document.createElement('tr');
+                const headerRow = document.createElement('tr');
+
+                // Check if 'label' is already included in the headers
+                if (!headers.includes('label')) {
                     const labelHeader = document.createElement('th');
                     labelHeader.textContent = 'Label';
                     headerRow.appendChild(labelHeader);
+                }
 
-                    if (Array.isArray(headers)) {
-                        headers.forEach((header) => {
-                            const th = document.createElement('th');
-                            th.textContent = formatHeader(header);
-                            headerRow.appendChild(th);
-                        });
-                    }
+                if (Array.isArray(headers)) {
+                    headers.forEach((header) => {
+                        const th = document.createElement('th');
+                        th.textContent = formatHeader(header);
+                        headerRow.appendChild(th);
+                    });
+                }
 
-                    const actionHeader = document.createElement('th');
-                    actionHeader.textContent = 'Action';
-                    headerRow.appendChild(actionHeader);
-                    thead.appendChild(headerRow);
+                const actionHeader = document.createElement('th');
+                actionHeader.textContent = 'Action';
+                headerRow.appendChild(actionHeader);
+                thead.appendChild(headerRow);
 
-                    const rows = tableData.data;
+                const rows = tableData.data;
 
-                    if (Array.isArray(rows)) {
-                        rows.forEach((row) => {
-                            const tr = document.createElement('tr');
+                if (Array.isArray(rows)) {
+                    rows.forEach((row) => {
+                        const tr = document.createElement('tr');
 
+                        // Add 'Label' cell only if it's not in the headers
+                        if (!headers.includes('label')) {
                             const labelCell = document.createElement('td');
                             labelCell.textContent = row['label'];
                             tr.appendChild(labelCell);
+                        }
 
-                            if (Array.isArray(headers)) {
-                                headers.forEach((header) => {
-                                    const td = document.createElement('td');
-                                    td.textContent = row[header];
-                                    tr.appendChild(td);
-                                });
-                            }
+                        if (Array.isArray(headers)) {
+                            headers.forEach((header) => {
+                                const td = document.createElement('td');
+                                td.textContent = row[header];
+                                tr.appendChild(td);
+                            });
+                        }
 
-                            const buttonGroup = createUpdateDeleteButtons(row);
-                            const buttonCell = document.createElement('td');
-                            buttonCell.appendChild(buttonGroup);
-                            tr.appendChild(buttonCell);
+                        const buttonGroup = createUpdateDeleteButtons(row);
+                        const buttonCell = document.createElement('td');
+                        buttonCell.appendChild(buttonGroup);
+                        tr.appendChild(buttonCell);
 
-                            row['__tableName'] = tableName;
-                            tr.dataset.id = row.id;
+                        row['__tableName'] = tableName;
+                        tr.dataset.id = row.id;
 
-                            tbody.appendChild(tr);
-                        });
-                    }
-
-                    table.appendChild(thead);
-                    table.appendChild(tbody);
-
-                    // Append the table to the container
-                    tableContainer.appendChild(table);
-
-                    // Append the table container to the resultsDiv
-                    resultsDiv.appendChild(tableContainer);
+                        tbody.appendChild(tr);
+                    });
                 }
+
+                table.appendChild(thead);
+                table.appendChild(tbody);
+
+                // Append the table to the container
+                tableContainer.appendChild(table);
+
+                // Append the table container to the resultsDiv
+                resultsDiv.appendChild(tableContainer);
             }
         }
     }
+}
+
 
 
     function createUpdateDeleteButtons(row) {

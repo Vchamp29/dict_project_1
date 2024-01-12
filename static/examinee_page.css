@@ -1,0 +1,20 @@
+.custom-select-width {
+    width: 250px; /* Adjust the width as needed */
+}
+.table-container {
+    margin-top: 40px;
+    max-height: 500px; /* Adjust the height as needed */
+    overflow-y: auto;
+}
+        /* Custom CSS for hoverable dropdown menu */
+.nav-item:hover .dropdown-menu {
+    display: block;
+}
+
+@media print {
+/* Hide the navigation bar and search form */
+.navbar, #search-form, .no-print {
+    display: none;
+}
+
+}

@@ -93,6 +93,16 @@
 
     <div class="container">
         <form action="/examinee_update_two" method="POST">
+            <div class="form-group">
+                <label for="table_selection">
+                    <a class="select-table">Select Table</a>
+                </label>
+                <select class="form-control" id="table_selection" name="table_selection" required>
+                    <option value="2023_users_assessment_examinees">Users Assessment Examinee</option>
+                    <option value="dict_diagnostic_examinees">DICT Diag. Examinees</option>
+                    <option value="ict_edp_examinees">ICT EDP Examinee</option>
+                </select>
+            </div>
             <input type="hidden" name="id" value="{{ data[0] }}">
             <div class="form-group">
                 <label for="full_name">Full Name</label>
