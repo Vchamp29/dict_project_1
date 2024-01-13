@@ -31,14 +31,23 @@
       background-color: transparent; /* Make the form background transparent */
       position: static; /* Reset the form's positioning */
     }
-    .remember-text {
-      color: black;
-      font-size: 24px; /* Adjust as needed */
-    }
-    /* Reduce the margin between the checkbox and the "Remember me" text */
-    .form_input[type="checkbox"] {
-      margin-right: -15px; /* Adjust as needed */
-    }
+    .form_field {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  /* Move the checkbox to the left side */
+  .form_input[type="checkbox"] {
+    margin-right: 10px; /* Adjust as needed */
+  }
+
+  /* Style the "Remember Me" text */
+  .remember-text {
+    color: black;
+    font-size: 18px; /* Adjust as needed */
+    margin-right: 40px; /* Add spacing between checkbox and text */
+  }
   </style>
 </head>
 <body class="align">

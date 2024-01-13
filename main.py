@@ -109,10 +109,13 @@ def delete_record(table_name, id):
 def booking_process():
     try:
         # Extract data from the form submission
-        full_name = request.form['full_name']
         last_name = request.form['last_name']
         first_name = request.form['first_name']
         middle_name = request.form['middle_name']
+
+        # Concatenate first_name, middle_name, and last_name into full_name
+        full_name = f"{last_name}, {first_name} {middle_name}".strip()
+
         gender = request.form['gender']
         profession_or_student = request.form['profession_or_student']
         course = request.form['course']
@@ -128,7 +131,7 @@ def booking_process():
 
         # Define a table label mapping
         table_labels = {
-            'dict_diagnostic_examinees': 'Examinees',
+            'dict_diagnostic_examinees': 'DICT Diagnostic Examinees',
             '2023_users_assessment_examinees': 'Users Assessment Examinee',
             'ict_edp_examinees': 'ICT EDP Examinee',
         }
@@ -158,7 +161,7 @@ def booking_process():
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
 
-        # Execute the INSERT query with the provided data and the new ID
+        # Execute the INSERT query with the provided data and the new full_name
         cur.execute(insert_query, (new_id, table_label, full_name, last_name, first_name, middle_name, gender,
                                    profession_or_student, course, school, company_name, position,
                                    examination_date, exam_venue, passed))
@@ -178,7 +181,6 @@ def booking_process():
         print(str(e))  # Print the error message for debugging
         flash('An error occurred while recording examinee information. Please try again.')
         return redirect(url_for('examinees'))
-
 
 
 
