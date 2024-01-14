@@ -6,6 +6,7 @@
     <title>Edit Examinee</title>
     <!-- Include Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.8.2/css/pikaday.min.css">
     <style>
         body {
             background-color: #f7f7f7;
@@ -93,16 +94,6 @@
 
     <div class="container">
         <form action="/examinee_update_two" method="POST">
-            <div class="form-group">
-                <label for="table_selection">
-                    <a class="select-table">Select Table</a>
-                </label>
-                <select class="form-control" id="table_selection" name="table_selection" required>
-                    <option value="2023_users_assessment_examinees">Users Assessment Examinee</option>
-                    <option value="dict_diagnostic_examinees">DICT Diag. Examinees</option>
-                    <option value="ict_edp_examinees">ICT EDP Examinee</option>
-                </select>
-            </div>
             <input type="hidden" name="id" value="{{ data[0] }}">
             <div class="form-group">
                 <label for="full_name">Full Name</label>
@@ -151,9 +142,9 @@
                 <input type="text" class="form-control" id="position" name="position" value="{{ data[11] }}">
             </div>
             <div class="form-group">
-                <label for="examination_date">Examination Date</label>
-                <input type="text" class="form-control" id="examination_date" name="examination_date" value="{{ data[12] }}">
-            </div>
+                <label for="examination_date">Examination Date (Month/Day/Year)</label>
+                <input type="text" class="form-control" id="examination_date" name="examination_date" value="{{ data[12] }}" required>
+             </div>             
             <div class="form-group">
                 <label for="exam_venue">Exam Venue</label>
                 <input type="text" class="form-control" id="exam_venue" name="exam_venue" value="{{ data[13] }}">
@@ -169,8 +160,22 @@
         </form>
     </div>
 
+    <script>
+        var picker = new Pikaday({
+            field: document.getElementById('examination_date'),
+            format: 'MMMM D, YYYY',
+            toString(date, format) {
+                return moment(date).format(format);
+            },
+            parse(dateString, format) {
+                return moment(dateString, format).toDate();
+            }
+        });
+
+    </script>
     <!-- Include Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.8.2/pikaday.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 </body>

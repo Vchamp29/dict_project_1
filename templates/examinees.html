@@ -165,7 +165,7 @@
                                     <input type="text" class="form-control" id="position" name="position">
                                 </div>
                                 <div class="form-group">
-                                    <label for="examination_date">Examination Date (Month Day, Year)</label>
+                                    <label for="examination_date">Examination Date (Month/Day/Year)</label>
                                     <input type="text" class="form-control" id="examination_date" name="examination_date" placeholder="Enter Date" required>
                                 </div>                
                                 <div class="form-group">
@@ -263,16 +263,16 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 
 <script>
-    var picker = new Pikaday({
-        field: document.getElementById('examination_date'),
-        format: 'MMMM D, YYYY',
-        toString(date, format) {
-            return moment(date).format(format);
-        },
-        parse(dateString, format) {
-            return moment(dateString, format).toDate();
-        }
-    });
+var picker = new Pikaday({
+    field: document.getElementById('examination_date'),
+    format: 'MMMM D, YYYY',
+    toString(date, format) {
+        return moment(date).format(format);
+    },
+    parse(dateString, format) {
+        return moment(dateString, format).toDate();
+    }
+});
  document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('search-form');
     const resultsDiv = document.getElementById('results');
@@ -349,24 +349,22 @@
     function printResultsTable() {
         window.print();
     }
-
     function renderFilterResultsTable(data) {
     resultsDiv.innerHTML = '';
 
     for (const [tableName, tableData] of Object.entries(data)) {
-        if (tableName === filterSelect.value) { // Check if the current table matches the selected table option
+        if (tableName === filterSelect.value) {
             if (tableData.columns && tableData.data && Array.isArray(tableData.columns) && Array.isArray(tableData.data) && tableData.columns.length > 0 && tableData.data.length > 0) {
                 const tableHeading = document.createElement('h2');
                 tableHeading.textContent = formatTableName(tableName);
                 resultsDiv.appendChild(tableHeading);
 
-                // Create a div for vertical scrolling
                 const tableContainer = document.createElement('div');
                 tableContainer.classList.add('table-container');
 
-                // Create the table element
                 const table = document.createElement('table');
                 table.classList.add('table', 'table-bordered', 'table-striped');
+                table.style.tableLayout = 'fixed'; // Ensure the table layout is fixed
 
                 const thead = document.createElement('thead');
                 const tbody = document.createElement('tbody');
@@ -375,71 +373,84 @@
 
                 const headerRow = document.createElement('tr');
 
-                // Check if 'label' is already included in the headers
-                if (!headers.includes('label')) {
-                    const labelHeader = document.createElement('th');
-                    labelHeader.textContent = 'Label';
-                    headerRow.appendChild(labelHeader);
-                }
+                headers.forEach((header) => {
+                    const th = document.createElement('th');
+                    th.textContent = formatHeader(header);
 
-                if (Array.isArray(headers)) {
-                    headers.forEach((header) => {
-                        const th = document.createElement('th');
-                        th.textContent = formatHeader(header);
-                        headerRow.appendChild(th);
-                    });
-                }
+                    if (header === 'id') {
+                        th.style.width = '60px';
+                    } else if (header === 'status') {
+                        th.style.width = '100px';
+                    } else if (header === 'middle name') {
+                        th.style.width = '100px';
+                    } else if (header === 'sex') {
+                        th.style.width = '120px';
+                    } else if (header === 'first name') {
+                        th.style.width = '280px';
+                    } else if (header === 'last name') {
+                        th.style.width = '300px';
+                    } else {
+                        th.style.width = '450px';
+                    }
+                    headerRow.appendChild(th);
+                });
 
                 const actionHeader = document.createElement('th');
                 actionHeader.textContent = 'Action';
+                actionHeader.style.width = '200px';
                 headerRow.appendChild(actionHeader);
                 thead.appendChild(headerRow);
 
                 const rows = tableData.data;
 
-                if (Array.isArray(rows)) {
-                    rows.forEach((row) => {
-                        const tr = document.createElement('tr');
+                rows.forEach((row) => {
+                    const tr = document.createElement('tr');
 
-                        // Add 'Label' cell only if it's not in the headers
-                        if (!headers.includes('label')) {
-                            const labelCell = document.createElement('td');
-                            labelCell.textContent = row['label'];
-                            tr.appendChild(labelCell);
+                    headers.forEach((header) => {
+                        const td = document.createElement('td');
+                        td.textContent = row[header];
+
+                        if (header === 'id') {
+                            td.style.width = '60px';
+                        } else if (header === 'status') {
+                            td.style.width = '100px';
+                        } else if (header === 'middle name') {
+                            td.style.width = '100px';
+                        } else if (header === 'sex') {
+                            td.style.width = '120px';
+                        } else if (header === 'first name') {
+                            td.style.width = '280px';
+                        } else if (header === 'last name') {
+                            td.style.width = '300px';
+                        } else {
+                            td.style.width = '450px';
                         }
-
-                        if (Array.isArray(headers)) {
-                            headers.forEach((header) => {
-                                const td = document.createElement('td');
-                                td.textContent = row[header];
-                                tr.appendChild(td);
-                            });
-                        }
-
-                        const buttonGroup = createUpdateDeleteButtons(row);
-                        const buttonCell = document.createElement('td');
-                        buttonCell.appendChild(buttonGroup);
-                        tr.appendChild(buttonCell);
-
-                        row['__tableName'] = tableName;
-                        tr.dataset.id = row.id;
-
-                        tbody.appendChild(tr);
+                        tr.appendChild(td);
                     });
-                }
+
+                    const buttonGroup = createUpdateDeleteButtons(row);
+                    const buttonCell = document.createElement('td');
+                    buttonCell.appendChild(buttonGroup);
+                    buttonCell.style.width = '200px';
+                    tr.appendChild(buttonCell);
+
+                    row['__tableName'] = tableName;
+                    tr.dataset.id = row.id;
+
+                    tbody.appendChild(tr);
+                });
 
                 table.appendChild(thead);
                 table.appendChild(tbody);
-
-                // Append the table to the container
                 tableContainer.appendChild(table);
-
-                // Append the table container to the resultsDiv
                 resultsDiv.appendChild(tableContainer);
             }
         }
     }
 }
+
+
+
 
 
 
@@ -585,9 +596,11 @@ function renderResults(results) {
 
                 // Adjust the width of the ID column
                 if (header === 'id') {
-                    th.style.minWidth = '50px'; // Adjust the width according to your needs
+                    th.style.minWidth = '50px';
+                } else if (header === 'status') { // Check if the header is 'status' and adjust
+                    th.style.minWidth = '100px'; // Set a narrower width for 'status'
                 } else {
-                    th.style.minWidth = '300px'; // Adjust the width according to your needs for other columns
+                    th.style.minWidth = '300px';
                 }
 
                 headerRow.appendChild(th);
@@ -595,10 +608,7 @@ function renderResults(results) {
 
             const actionHeader = document.createElement('th');
             actionHeader.textContent = 'Action';
-
-            // Apply a style to make the action header wider
-            actionHeader.style.minWidth = '200px'; // Adjust the width according to your needs
-
+            actionHeader.style.minWidth = '200px';
             headerRow.appendChild(actionHeader);
             thead.appendChild(headerRow);
 
@@ -611,11 +621,13 @@ function renderResults(results) {
                     const td = document.createElement('td');
                     td.textContent = row[header];
 
-
+                    // Adjust the width of the ID column
                     if (header === 'id') {
-                        td.style.minWidth = '70px'; // Adjust the width according to your needs
+                        td.style.minWidth = '70px';
+                    } else if (header === 'status') { // Check if the header is 'status' and adjust
+                        td.style.minWidth = '100px'; // Set a narrower width for 'status'
                     } else {
-                        td.style.minWidth = '300px'; // Adjust the width according to your needs for other columns
+                        td.style.minWidth = '300px';
                     }
 
                     tr.appendChild(td);
@@ -634,11 +646,7 @@ function renderResults(results) {
 
             table.appendChild(thead);
             table.appendChild(tbody);
-
-            // Append the table to the container
             tableContainer.appendChild(table);
-
-            // Append the table container to the results div
             resultsDiv.appendChild(tableContainer);
         }
     }
@@ -646,6 +654,7 @@ function renderResults(results) {
         resultsDiv.innerHTML = '<div style="display: flex; justify-content: center; align-items: center; font-size: 2em; font-weight: bold;">No Results Found</div>';
     }
 }
+
 
 
 
