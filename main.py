@@ -37,7 +37,8 @@ def connection():
 @app.route('/')
 @login_required
 def home():
-    return render_template('index.html')
+    total_examinees = get_total_examinees()
+    return render_template('index.html', total_examinees=total_examinees)
 
 @app.route('/booking')
 @login_required
@@ -246,6 +247,61 @@ def search():
     except Exception as e:
         return jsonify({'error': str(e)})
 
+def get_total_examinees():
+    conn = connection()
+    cursor = conn.cursor()
+
+    total_examinees = 0
+
+    tables_to_count = [
+        'users_assessment_examinees',
+        'dict_diagnostic_examinees',
+        'ict_edp_examinees',
+    ]
+
+    for table in tables_to_count:
+        # Execute a query to count the number of examinees in each table
+        query = f"SELECT COUNT(*) FROM {table}"
+        cursor.execute(query)
+        result = cursor.fetchone()
+        total_examinees += result[0]
+
+    conn.close()
+
+    return total_examinees
+
+def get_total_passed_examinees():
+    conn = connection()
+    cursor = conn.cursor()
+
+    total_passed_examinees = 0
+
+    tables_to_count = [
+        'users_assessment_examinees',
+        'dict_diagnostic_examinees',
+        'ict_edp_examinees',
+    ]
+
+    for table in tables_to_count:
+        # Execute a query to count the number of examinees with status "Passed" in each table
+        query = f"SELECT COUNT(*) FROM {table} WHERE status = 'Passed'"
+        cursor.execute(query)
+        result = cursor.fetchone()
+        total_passed_examinees += result[0]
+
+    conn.close()
+
+    return total_passed_examinees
+
+# Define a context processor to make total_examinees available to all templates
+@app.context_processor
+def inject_total_examinees():
+    total_examinees = get_total_examinees()
+    return dict(total_examinees=total_examinees)
+@app.context_processor
+def inject_total_passed_examinees():
+    total_passed = get_total_passed_examinees()
+    return dict(total_passed=total_passed)
 
 def search_database(query):
     conn = connection()
@@ -456,7 +512,7 @@ def register():
 
 
 
-#fetching users to display in a table
+#fetching `users` to display in a table
 @app.route('/display')
 @login_required
 def display():
