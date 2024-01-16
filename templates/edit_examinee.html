@@ -112,42 +112,46 @@
                 <input type="text" class="form-control" id="middle_name" name="middle_name" value="{{ data[5] }}">
             </div>
             <div class="form-group">
+                <label for="suffix">Suffix</label>
+                <input type="text" class="form-control" id="suffix" name="suffix" value="{{ data[6] }}">
+            </div>
+            <div class="form-group">
                 <label for="gender">Sex</label>
                 <select class="form-control" id="se" name="sex">
-                    <option value="Male" {% if data[6] == 'Male' %} selected {% endif %}>Male</option>
-                    <option value="Female" {% if data[6] == 'Female' %} selected {% endif %}>Female</option>
+                    <option value="Male" {% if data[7] == 'Male' %} selected {% endif %}>Male</option>
+                    <option value="Female" {% if data[7] == 'Female' %} selected {% endif %}>Female</option>
                 </select>
             </div>
             <div class="form-group">
                 <label for="profession_or_student">Professional/Student</label>
                 <select class="form-control" id="profession_or_student" name="profession_or_student">
-                    <option value="Professional" {% if data[7] == 'Professional' %} selected {% endif %}>Professional</option>
-                    <option value="Student" {% if data[7] == 'Student' %} selected {% endif %}>Student</option>
+                    <option value="Professional" {% if data[8] == 'Professional' %} selected {% endif %}>Professional</option>
+                    <option value="Student" {% if data[8] == 'Student' %} selected {% endif %}>Student</option>
                 </select>
             </div>
             <div class="form-group">
                 <label for="course">Course</label>
-                <input type="text" class="form-control" id="course" name="course" value="{{ data[8] }}">
+                <input type="text" class="form-control" id="course" name="course" value="{{ data[9] }}">
             </div>
             <div class="form-group">
                 <label for="school">School</label>
-                <input type="text" class="form-control" id="school" name="school" value="{{ data[9] }}">
+                <input type="text" class="form-control" id="school" name="school" value="{{ data[10] }}">
             </div>
             <div class="form-group">
                 <label for="company_name">Company Name</label>
-                <input type="text" class="form-control" id="company_name" name="company_name" value="{{ data[10] }}">
+                <input type="text" class="form-control" id="company_name" name="company_name" value="{{ data[11] }}">
             </div>
             <div class="form-group">
                 <label for="position">Position</label>
-                <input type="text" class="form-control" id="position" name="position" value="{{ data[11] }}">
+                <input type="text" class="form-control" id="position" name="position" value="{{ data[12] }}">
             </div>
             <div class="form-group">
                 <label for="examination_date">Examination Date (MM/DD/YYYY)</label>
-                <input type="text" class="form-control" id="examination_date" name="examination_date" value="{{ data[12] }}" required>
+                <input type="text" class="form-control" id="examination_date" name="examination_date" value="{{ data[13] }}" required>
              </div>             
             <div class="form-group">
                 <label for="exam_venue">Exam Venue</label>
-                <input type="text" class="form-control" id="exam_venue" name="exam_venue" value="{{ data[13] }}">
+                <input type="text" class="form-control" id="exam_venue" name="exam_venue" value="{{ data[14] }}">
             </div>
             <div class="form-group">
                 <div class="form-check">

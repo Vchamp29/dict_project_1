@@ -113,9 +113,10 @@ def booking_process():
         last_name = request.form['last_name']
         first_name = request.form['first_name']
         middle_name = request.form['middle_name']
+        suffix = request.form['suffix']
 
         # Concatenate first_name, middle_name, and last_name into full_name
-        full_name = f"{last_name}, {first_name} {middle_name}".strip()
+        full_name = f"{last_name}, {first_name} {middle_name} {suffix}".strip()
 
         sex = request.form['sex']
         profession_or_student = request.form['profession_or_student']
@@ -156,14 +157,14 @@ def booking_process():
 
         # Define the INSERT SQL query for the selected table, including the new ID
         insert_query = f"""
-            INSERT INTO {selected_table} (id, label, full_name, last_name, first_name, middle_name, sex, 
+            INSERT INTO {selected_table} (id, label, full_name, last_name, first_name, middle_name, suffix, sex, 
             profession_or_student, course, school, company_name, position, examination_date, 
             exam_venue, status)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
 
         # Execute the INSERT query with the provided data and the new full_name
-        cur.execute(insert_query, (new_id, table_label, full_name, last_name, first_name, middle_name, sex,
+        cur.execute(insert_query, (new_id, table_label, full_name, last_name, first_name, middle_name, suffix, sex,
                                 profession_or_student, course, school, company_name, position,
                                 examination_date, exam_venue, passed))
 
@@ -201,7 +202,7 @@ def get_examinees_data_from_db(examinees_type, search_query):
 
     # Define the columns to search in for the specific examinees type
     columns_to_search = [
-        'full_name', 'last_name', 'first_name', 'middle_name', 'sex',
+        'full_name', 'last_name', 'first_name', 'middle_name', 'suffix','sex',
         'course', 'school', 'company_name', 'position', 'examination_date', 'exam_venue' , 'status'
     ]
 
@@ -594,6 +595,7 @@ def examinee_update_two():
         last_name = request.form['last_name']
         first_name = request.form['first_name']
         middle_name = request.form['middle_name']
+        suffix = request.form['suffix']
         sex = request.form['sex']
         profession_or_student = request.form['profession_or_student']
         course = request.form['course']
@@ -615,14 +617,14 @@ def examinee_update_two():
         # Define the UPDATE SQL query for the selected table
         update_query = """
             UPDATE {}
-            SET full_name = %s, last_name = %s, first_name = %s, middle_name = %s, sex = %s,
+            SET full_name = %s, last_name = %s, first_name = %s, middle_name = %s, suffix = %s, sex = %s,
                 profession_or_student = %s, course = %s, school = %s, company_name = %s, position = %s,
                 examination_date = %s, exam_venue = %s
             WHERE id = %s
         """.format(selected_table)
 
         # Execute the UPDATE query
-        cur.execute(update_query, (full_name, last_name, first_name, middle_name, sex,
+        cur.execute(update_query, (full_name, last_name, first_name, middle_name, suffix, sex,
                                    profession_or_student, course, school, company_name, position,
                                    examination_date, exam_venue, examinee_id))
 
