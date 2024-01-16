@@ -130,7 +130,7 @@ hr {
   }
   .login input[type="password"]:hover,
   .login input[type="text"]:hover {
-    background-color: #434a52;
+    background-color: #fdfeff;
   }
   .submitButton {
     background-color: #270cbf;

@@ -116,7 +116,7 @@ def booking_process():
         # Concatenate first_name, middle_name, and last_name into full_name
         full_name = f"{last_name}, {first_name} {middle_name}".strip()
 
-        gender = request.form['gender']
+        sex = request.form['sex']
         profession_or_student = request.form['profession_or_student']
         course = request.form['course']
         school = request.form['school']
@@ -155,16 +155,16 @@ def booking_process():
 
         # Define the INSERT SQL query for the selected table, including the new ID
         insert_query = f"""
-            INSERT INTO {selected_table} (id, label, full_name, last_name, first_name, middle_name, gender, 
+            INSERT INTO {selected_table} (id, label, full_name, last_name, first_name, middle_name, sex, 
             profession_or_student, course, school, company_name, position, examination_date, 
             exam_venue, status)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
 
         # Execute the INSERT query with the provided data and the new full_name
-        cur.execute(insert_query, (new_id, table_label, full_name, last_name, first_name, middle_name, gender,
-                                   profession_or_student, course, school, company_name, position,
-                                   examination_date, exam_venue, passed))
+        cur.execute(insert_query, (new_id, table_label, full_name, last_name, first_name, middle_name, sex,
+                                profession_or_student, course, school, company_name, position,
+                                examination_date, exam_venue, passed))
 
         # Commit the changes to the database
         conn.commit()
@@ -200,7 +200,7 @@ def get_examinees_data_from_db(examinees_type, search_query):
 
     # Define the columns to search in for the specific examinees type
     columns_to_search = [
-        'full_name', 'last_name', 'first_name', 'middle_name', 'gender',
+        'full_name', 'last_name', 'first_name', 'middle_name', 'sex',
         'course', 'school', 'company_name', 'position', 'examination_date', 'exam_venue' , 'status'
     ]
 
@@ -383,7 +383,7 @@ def login():
 
         if hashed_password and bcrypt.checkpw(pw.encode('utf-8'), hashed_password[0].encode('utf-8')):
             session['username'] = uname
-            return redirect('/')
+            return redirect('/examinees')
         else:
             flash('Login failed: username or password is incorrect', 'danger')
 
@@ -408,7 +408,7 @@ def login_process():
 
         if hashed_password and bcrypt.checkpw(pw.encode('utf-8'), hashed_password[0].encode('utf-8')):
             session['username'] = uname
-            return redirect('/')
+            return redirect('/examinees')
         else:
             flash('Login failed: username or password is incorrect', 'danger')
 
@@ -538,7 +538,7 @@ def examinee_update_two():
         last_name = request.form['last_name']
         first_name = request.form['first_name']
         middle_name = request.form['middle_name']
-        gender = request.form['gender']
+        sex = request.form['sex']
         profession_or_student = request.form['profession_or_student']
         course = request.form['course']
         school = request.form['school']
@@ -559,14 +559,14 @@ def examinee_update_two():
         # Define the UPDATE SQL query for the selected table
         update_query = """
             UPDATE {}
-            SET full_name = %s, last_name = %s, first_name = %s, middle_name = %s, gender = %s,
+            SET full_name = %s, last_name = %s, first_name = %s, middle_name = %s, sex = %s,
                 profession_or_student = %s, course = %s, school = %s, company_name = %s, position = %s,
                 examination_date = %s, exam_venue = %s
             WHERE id = %s
         """.format(selected_table)
 
         # Execute the UPDATE query
-        cur.execute(update_query, (full_name, last_name, first_name, middle_name, gender,
+        cur.execute(update_query, (full_name, last_name, first_name, middle_name, sex,
                                    profession_or_student, course, school, company_name, position,
                                    examination_date, exam_venue, examinee_id))
 

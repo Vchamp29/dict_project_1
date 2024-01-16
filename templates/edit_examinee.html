@@ -113,7 +113,7 @@
             </div>
             <div class="form-group">
                 <label for="gender">Gender</label>
-                <select class="form-control" id="gender" name="gender">
+                <select class="form-control" id="se" name="sex">
                     <option value="Male" {% if data[6] == 'Male' %} selected {% endif %}>Male</option>
                     <option value="Female" {% if data[6] == 'Female' %} selected {% endif %}>Female</option>
                 </select>
@@ -142,7 +142,7 @@
                 <input type="text" class="form-control" id="position" name="position" value="{{ data[11] }}">
             </div>
             <div class="form-group">
-                <label for="examination_date">Examination Date (Month/Day/Year)</label>
+                <label for="examination_date">Examination Date (MM/DD/YYYY)</label>
                 <input type="text" class="form-control" id="examination_date" name="examination_date" value="{{ data[12] }}" required>
              </div>             
             <div class="form-group">
@@ -158,8 +158,12 @@
             <input type="hidden" name="table_selection" value="{{ table_selection }}">
             <button type="submit" class="btn btn-primary">Update</button>
         </form>
-    </div>
-
+    </div>    
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.8.2/pikaday.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script>
         var picker = new Pikaday({
             field: document.getElementById('examination_date'),
@@ -173,10 +177,6 @@
         });
 
     </script>
-    <!-- Include Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.8.2/pikaday.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
 </body>
 </html>
