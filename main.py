@@ -132,7 +132,7 @@ def booking_process():
         # Define a table label mapping
         table_labels = {
             'dict_diagnostic_examinees': 'DICT Diagnostic Examinees',
-            '2023_users_assessment_examinees': 'Users Assessment Examinee',
+            'users_assessment_examinees': 'Users Assessment Examinee',
             'ict_edp_examinees': 'ICT EDP Examinee',
         }
 
@@ -254,7 +254,7 @@ def search_database(query):
     dict_database = {}
 
     tables_to_search = [
-        '2023_users_assessment_examinees',
+        'users_assessment_examinees',
         'dict_diagnostic_examinees',
         'ict_edp_examinees',
     ]
@@ -312,7 +312,7 @@ def examinees():
     if filter_value == 'All':
         # If 'All' is selected, construct a query to search in all relevant tables
         tables_to_search = [
-            '2023_users_assessment_examinees',
+            'users_assessment_examinees',
             'dict_diagnostic_examinees',
             'ict_edp_examinees',
         ]
@@ -359,7 +359,7 @@ def examinees_passed():
     cur = conn.cursor()
     
     # Execute the SQL query to fetch only "Passed" records
-    cur.execute("SELECT * FROM 2023_ict_diagnostic_passers WHERE status = 'Passed'")
+    cur.execute("SELECT * FROM ict_diagnostic_passers WHERE status = 'Passed'")
     examinees_data = cur.fetchall()
     
     # Since this route is specifically for "Passed" records, you can set page and total_pages to 1
@@ -570,7 +570,7 @@ def examinee_update_two():
                                    profession_or_student, course, school, company_name, position,
                                    examination_date, exam_venue, examinee_id))
 
-        if selected_table in ['ict_edp_examinees', 'dict_diagnostic_examinees', '2023_users_assessment_examinees']:
+        if selected_table in ['ict_edp_examinees', 'dict_diagnostic_examinees', 'users_assessment_examinees']:
             # Check if the examinee passed and update the status in the 'passers' table
             if passed == 'Yes':
                 cur.execute("""

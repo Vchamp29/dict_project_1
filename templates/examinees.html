@@ -81,7 +81,7 @@
                     <div class="form-group">
                         <label for="query">Search Query:</label>
                         <div class="input-group">
-                            <input type="text" id="query" name="query" class="form-control" placeholder="Please enter your search parameters" required>
+                            <input type="text" id="query" name="query" class="form-control" placeholder="enter your search parameters" required>
                             <div class="input-group-append">
                                 <button type="submit" class="btn btn-primary">Search</button>
                             </div>
@@ -90,7 +90,7 @@
                     <div class="d-flex align-items-center"> <!-- Add this div -->
                         <select id="filter" name="filter" class="form-select custom-select-width mr-2"> <!-- Add mr-2 class -->
                             <option value="#" disabled selected>Exam Type</option>
-                            <option value="2023_users_assessment_examinees">Users Assessment Examinees</option>
+                            <option value="users_assessment_examinees">Users Assessment Examinees</option>
                             <option value="dict_diagnostic_examinees">DICT Diagnostic Examinees</option>
                             <option value="ict_edp_examinees">ICT EDP Examinees</option>
                         </select>
@@ -116,7 +116,7 @@
                             <!-- Your form goes here -->
                             <form action="{{ url_for('booking_process') }}" method="POST">
                                 <div class="form-group">
-                                    <p style="font-size: 17px; font-weight: 100;">Please carefully insert data</p>
+                                    <p style="font-size: 17px; font-weight: 100;">Please carefully insert data parameters</p>
                                 </div>
                                 <div class="form-group">
                                     <label for="table_selection">
@@ -141,7 +141,7 @@
                                     <input type="text" class="form-control" id="middle_name" name="middle_name" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="gender">Gender</label>
+                                    <label for="gender">Sex</label>
                                     <select class="form-control" id="sex" name="sex" required>
                                         <option value="Male">Male</option>
                                         <option value="Female">Female</option>
