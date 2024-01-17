@@ -117,23 +117,23 @@ hr {
     padding: 1rem;
   }
   .login label {
-    background-color: #363b41;
+    background-color: #ffffff;
     border-bottom-right-radius: 0;
     border-top-right-radius: 0;
     padding-inline: 1.25rem;
   }
   .login input[type="password"],
   .login input[type="text"] {
-    background-color: #3b4148;
+    background-color: #ffffff;
     border-bottom-left-radius: 20;
     border-top-left-radius: 20;
   }
   .login input[type="password"]:hover,
   .login input[type="text"]:hover {
-    background-color: #fdfeff;
+    background-color: #ffffff;
   }
   .submitButton {
-    background-color: #270cbf;
+    background-color: #0c3cbf;
     color: #eee;
     font-weight: 700;
     text-transform: uppercase;
